@@ -1,12 +1,12 @@
 import './App.css';
-import RestaurantScreen from './pages/restaurant';
+import RestaurantScreen from './pages/restaurantPage';
 import res1 from './sampleData/restaurantData';
 
 
 
 function App() {
   return (
-    <div className="App text-3xl font-bold underline">
+    <div className="App">
     Swifty
     <RestaurantScreen restaurant={res1} />
     </div>

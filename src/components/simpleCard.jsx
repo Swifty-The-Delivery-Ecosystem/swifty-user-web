@@ -8,7 +8,7 @@ import {
  
 export function HorizontalCard({item}) {
   return (
-    <Card className="my-5 w-full max-w-[48rem] flex-row">
+    <Card className="my-5 w-full  flex-row">
       <CardHeader
         shadow={false}
         floated={false}

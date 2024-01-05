@@ -5,6 +5,7 @@ import SignUp from "./pages/signup_page";
 import res1 from "./sampleData/restaurantData";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/navbar";
+import MainScreen from "./pages/mainPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<RestaurantScreen restaurant={res1} />} />
         <Route path="/login" element={<Login />} />
         <Route path='/signup' element={<SignUp />} />
+        <Route path='/home' element={<MainScreen />} />
       </Routes>
     </BrowserRouter>
   );

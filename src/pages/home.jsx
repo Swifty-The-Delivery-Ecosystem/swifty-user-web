@@ -3,11 +3,13 @@ import home from "../assets/images/home.png";
 import star from "../assets/images/star.png";
 import "../assets/css/home.css";
 import { motion, useScroll } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
   const ref = useRef(null);
   const { scrollXProgress } = useScroll({ container: ref });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const locationParam = 1;
@@ -56,7 +58,7 @@ const Home = () => {
 
         <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
           {restaurants.map((restaurant, index) => (
-            <li key={index} className="rounded-xl items-center">
+            <li onClick={ ()=>{navigate('/restaurant', {state: {restaurant : restaurant }})}} key={index} className="rounded-xl items-center">
               <img
                 src={restaurant.image_url}
                 alt={restaurant.name}

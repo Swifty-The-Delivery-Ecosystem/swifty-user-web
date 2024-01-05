@@ -4,6 +4,7 @@ import {
   CardBody,
   Typography,
   Button,
+  Chip
 } from "@material-tailwind/react";
  
 export function HorizontalCard({item}) {
@@ -21,6 +22,7 @@ export function HorizontalCard({item}) {
         />
       </CardHeader>
       <CardBody>
+      <Chip className="bg-white"></Chip>
         <Typography variant="h6" color="gray" className="mb-4 uppercase">
           {item.type ===0? "VEG": "NONVEG"}
         </Typography>

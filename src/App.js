@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/navbar";
 import Home from "./pages/home";
 import MainScreen from "./pages/mainPage";
+import Checkout from "./pages/checkout";
 
 function App() {
   return (
@@ -15,9 +16,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path='/signup' element={<SignUp />} />
-        <Route path='/home' element={<MainScreen />} />
-        <Route path="/restaurant" element={ <RestaurantScreen /> } />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/home" element={<MainScreen />} />
+        <Route path="/restaurant" element={<RestaurantScreen />} />
+        <Route path="/cart" element={<Checkout />} />
       </Routes>
     </BrowserRouter>
   );

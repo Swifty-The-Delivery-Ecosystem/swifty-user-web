@@ -58,7 +58,7 @@ const Home = () => {
 
         <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
           {restaurants.map((restaurant, index) => (
-            <li onClick={ ()=>{navigate('/restaurant', {state: {restaurant : restaurant }})}} key={index} className="rounded-xl items-center">
+            <li onClick={ ()=>{navigate('/restaurant', {state: {restaurant : restaurant }})}} key={index} className="rounded-xl hover:cursor-pointer items-center">
               <img
                 src={restaurant.image_url}
                 alt={restaurant.name}

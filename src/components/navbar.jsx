@@ -10,7 +10,7 @@ import "react-js-dropdavn/dist/index.css";
 const Navbar = ({ cartItemsCountProp }) => {
   const [cartItemsCount, setCartItemsCount] = useState(cartItemsCountProp);
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState();
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
@@ -47,38 +47,6 @@ const Navbar = ({ cartItemsCountProp }) => {
         <NavLink to="/">
           <Logo />
         </NavLink>
-        {/* <div className="relative flex items-center">
-          <div className="mr-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6 text-blue-500"
-            >
-              
-            </svg>
-          </div>
-          <select
-            value={selectedLocation}
-            onChange={(e) => handleLocationSelect(e.target.value)}
-            className="appearance-none bg-transparent border-none text-xl font-medium p-2 outline-none focus:outline-none"
-          >
-            <option value="" disabled>
-              Select Location
-            </option>
-            {locations.map((location) => (
-              <option
-                key={location}
-                value={location}
-                disabled={selectedLocation === location}
-              >
-                {location}
-              </option>
-            ))}
-          </select>
-        </div> */}
         <div className="flex gap-3 items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +78,7 @@ const Navbar = ({ cartItemsCountProp }) => {
           </div>
         </div>
       </div>
-      <div className="w-1/4 hidden md:block">
+      <div className="w-1/2 hidden md:block">
         <input
           type="text"
           value={searchtext}
@@ -133,10 +101,10 @@ const Navbar = ({ cartItemsCountProp }) => {
           />
         )}
         {isMenuOpen && (
-          <ul className="absolute h-80 top-16 left-0 right-0 flex flex-col justify-evenly items-center bg-white shadow-md pb-5 z-20 ">
+          <div className="absolute h-80 top-16 left-0 right-0 flex flex-col justify-evenly items-center bg-white shadow-md pb-5 z-20 ">
             {navmenu.map((menu) => {
               return (
-                <li key={menu.name}>
+                <div key={menu.name}>
                   <NavLink
                     to={menu.link}
                     activeclassname="text-green-700"
@@ -145,10 +113,10 @@ const Navbar = ({ cartItemsCountProp }) => {
                   >
                     {menu.name}
                   </NavLink>
-                </li>
+                </div>
               );
             })}
-            <li>
+            <div>
               <NavLink
                 to="/cart"
                 className="flex relative"
@@ -159,29 +127,29 @@ const Navbar = ({ cartItemsCountProp }) => {
                   {cartItemsCount}
                 </div>
               </NavLink>
-            </li>
-          </ul>
+            </div>
+          </div>
         )}
       </div>
       {/* Desktop Menu */}
-      <ul className="hidden items-center md:flex space-x-12 menu">
-        <li>
+      <div className="hidden items-center md:flex space-x-12 menu">
+        <div>
           <NavLink
             to="/login"
-            className="text-lg text-white font-bold bg-orange-400 px-5 py-3 hover:bg-orange-600 rounded-xl"
+            className="text-lg text-white font-bold bg-purple-400 px-5 py-3 hover:bg-purple-600 rounded-xl"
           >
             Login
           </NavLink>
-        </li>
-        <li>
+        </div>
+        <div>
           <NavLink to="/cart" className="flex relative">
-            <BsFillCartFill className="text-4xl text-orange-500" />
+            <BsFillCartFill className="text-4xl text-purple-700" />
             <div className="absolute text-white text-xs inset-0 flex justify-center items-center font-bold">
               {cartItemsCount}
             </div>
           </NavLink>
-        </li>
-      </ul>
+        </div>
+      </div>
     </nav>
   );
 };

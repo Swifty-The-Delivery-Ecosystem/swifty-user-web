@@ -1,11 +1,11 @@
-// import {
-//   Card,
-//   CardHeader,
-//   CardBody,
-//   Typography,
-//   Button,
-//   Chip
-// } from "@material-tailwind/react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Typography,
+  Button,
+  Chip
+} from "@material-tailwind/react";
  
 // export function HorizontalCard({item}) {
 //   return (
@@ -75,22 +75,32 @@ const MenuItem = ({ item, onAddToCart, onRemoveFromCart }) => {
   };
 
   return (
+    <Card className="my-5 mx-10 shadow-none">
     <div className="flex justify-between items-center p-4 border-b">
-      <div>
+      <div className="flex justify-between items-center">
+      <img src={item.image_url} className="w-40 rounded-md"  alt={item.name}/>
+      <div className="items-center px-10">
         <h3 className="text-lg font-semibold">{item.name}</h3>
-        <p className="text-gray-500">{item.description}</p>
+        <p className="text-gray-500 text-sm">{item.description}</p>
+        </div>
       </div>
-      <div className="flex items-center">
-        <button onClick={addToCart} className="bg-green-500 text-white px-4 py-2 mr-2">
-          {quantity === 0 ? 'Add to Cart' : `+${quantity}`}
+      <Card className="flex  justify-between items-center bg-white  rounded-md p-2">
+      <div className="flex items-center border-purple-500">
+        <button onClick={addToCart} className=" text-purple-500 font-bold px-2">
+          {quantity === 0 ? 'Add to Cart' : `+`}
         </button>
         {quantity > 0 && (
-          <button onClick={removeFromCart} className="bg-red-500 text-white px-2 py-1">
-            Remove
+          <>
+          <div className="px-2 text-purple-500 font-bold">{quantity}</div>
+          <button onClick={removeFromCart} className=" text-slate-200 font-bold px-2">
+            -
           </button>
+          </>
         )}
-      </div>
+        </div>
+      </Card>
     </div>
+    </Card>
   );
 };
 

@@ -1,15 +1,26 @@
-import React from "react";
-import SimpleCard, { HorizontalCard } from "../components/simpleCard";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+} from "@material-tailwind/react";
 import MenuList from "../components/menuList";
-import ShoppingCart from "../components/shoppingCart";
 import CartSummary from "../components/cart_summary";
-import { Card, CardBody, CardFooter, CardHeader } from "@material-tailwind/react";
 
 function RestaurantScreen() {
   const location = useLocation();
   const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(storedCart);
+  }, []);
+
+  const updateLocalStorage = (updatedCartItems) => {
+    localStorage.setItem("cart", JSON.stringify(updatedCartItems));
+  };
 
   const addToCart = (item) => {
     const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
@@ -21,8 +32,11 @@ function RestaurantScreen() {
           : cartItem
       );
       setCartItems(updatedCartItems);
+      updateLocalStorage(updatedCartItems);
     } else {
-      setCartItems([...cartItems, { ...item, quantity: 1 }]);
+      const updatedCartItems = [...cartItems, { id: item.id, quantity: 1 }];
+      setCartItems(updatedCartItems);
+      updateLocalStorage(updatedCartItems);
     }
   };
 
@@ -33,36 +47,44 @@ function RestaurantScreen() {
         : item
     );
 
-    setCartItems(updatedCartItems.filter((item) => item.quantity > 0));
+    const filteredCartItems = updatedCartItems.filter(
+      (item) => item.quantity > 0
+    );
+
+    setCartItems(filteredCartItems);
+    updateLocalStorage(filteredCartItems);
   };
 
   const restaurant = location.state.restaurant;
+
   return (
     <>
-    <Card className="w-9/10 mx-12 py-9 my-10 content-start justify-between bg-purple-100">
-      <CardHeader className="font-bold text-xl px-10 py-2 w-max"> {restaurant.name}</CardHeader>
-      <CardBody > </CardBody>
-      <CardFooter></CardFooter>
-    </Card>
-    <div className="">
-      <div className="min-h-screen ">
-        <MenuList
-          menuItems={restaurant.items}
-          onAddToCart={addToCart}
-          onRemoveFromCart={removeFromCart}
-        />
-      </div>
-
-      <div className="bottom-0 sticky">
-        {cartItems.length > 0 && (
-          <CartSummary
-            className="bottom-0"
-            restaurant={restaurant}
-            cartItems={cartItems}
+      <Card className="w-9/10 mx-12 py-9 my-10 content-start justify-between bg-purple-100">
+        <CardHeader className="font-bold text-xl px-10 py-2 w-max">
+          {restaurant.name}
+        </CardHeader>
+        <CardBody></CardBody>
+        <CardFooter></CardFooter>
+      </Card>
+      <div className="">
+        <div className="min-h-screen ">
+          <MenuList
+            menuItems={restaurant.items}
+            onAddToCart={addToCart}
+            onRemoveFromCart={removeFromCart}
           />
-        )}
+        </div>
+
+        <div className="bottom-0 sticky">
+          {cartItems.length > 0 && (
+            <CartSummary
+              className="bottom-0"
+              restaurant={restaurant}
+              cartItems={cartItems}
+            />
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 }

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function CartSummary({ cartItems, restaurant }) {
   const navigate = useNavigate();
+  const [cartprice, setcartprice] = useState(0);
   const getTotalItems = () => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
@@ -13,6 +15,26 @@ function CartSummary({ cartItems, restaurant }) {
       0
     );
   };
+  console.log("hello", restaurant._id, cartItems);
+  useEffect(() => {
+    const fetchTotalCartPrice = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4005/api/customer/cartprice",
+          {
+            restaurantID: restaurant._id, // Assuming you have the restaurant ID
+            cartItems: cartItems,
+          }
+        );
+
+        setcartprice(response.data.totalPrice);
+      } catch (error) {
+        console.error("Error fetching total cart price:", error);
+      }
+    };
+
+    fetchTotalCartPrice();
+  }, [restaurant, cartItems]);
 
   return (
     <div
@@ -24,7 +46,7 @@ function CartSummary({ cartItems, restaurant }) {
       className="text-center cursor-pointer px-6 items-center rounded-t-lg flex justify-between bg-green-400 text-white py-4 w-1/2 mx-auto bottom-0 sticky"
     >
       <div className="text-lg text-semibold">
-        {getTotalItems()} Items | ₹ {getTotalPrice()}
+        {getTotalItems()} Items | ₹ {cartprice}
       </div>
       <div className="flex font-semibold text-xl gap-4">
         View Cart{" "}

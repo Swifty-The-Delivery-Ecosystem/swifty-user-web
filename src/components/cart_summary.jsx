@@ -43,7 +43,7 @@ function CartSummary({ cartItems, restaurant }) {
           state: { restaurant: restaurant, cartItems: cartItems },
         });
       }}
-      className="text-center cursor-pointer px-6 items-center rounded-t-lg flex justify-between bg-green-400 text-white py-4 w-1/2 mx-auto bottom-0 sticky"
+      className="text-center cursor-pointer px-6 items-center rounded-t-lg flex justify-between bg-green-400 text-white py-4 md:w-1/2 mx-auto bottom-0 sticky"
     >
       <div className="text-lg text-semibold">
         {getTotalItems()} Items | ₹ {cartprice}

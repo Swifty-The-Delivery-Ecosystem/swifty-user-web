@@ -1,6 +1,78 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import star from "../assets/images/star.png";
+import axios from "axios";
+
+async function displayRazorpay() {
+  const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+  );
+
+  if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+  }
+
+  // creating a new order
+  const result = await axios.post("http://localhost:5000/payment/orders");
+
+  if (!result) {
+      alert("Server error. Are you online?");
+      return;
+  }
+
+  // Getting the order details back
+  const { amount, id: order_id, currency } = result.data;
+
+  const options = {
+      key: "rzp_test_r6FiJfddJh76SI", // Enter the Key ID generated from the Dashboard
+      amount: amount.toString(),
+      currency: currency,
+      name: "Soumya Corp.",
+      description: "Test Transaction",
+      order_id: order_id,
+      handler: async function (response) {
+          const data = {
+              orderCreationId: order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpaySignature: response.razorpay_signature,
+          };
+
+          const result = await axios.post("http://localhost:5000/payment/success", data);
+
+          alert(result.data.msg);
+      },
+      prefill: {
+          name: "Soumya Dey",
+          email: "SoumyaDey@example.com",
+          contact: "9999999999",
+      },
+      notes: {
+          address: "Soumya Dey Corporate Office",
+      },
+      theme: {
+          color: "#61dafb",
+      },
+  };
+
+  const paymentObject = new window.Razorpay(options);
+  paymentObject.open();
+}
+
+  function loadScript(src) {
+    return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => {
+            resolve(true);
+        };
+        script.onerror = () => {
+            resolve(false);
+        };
+        document.body.appendChild(script);
+    });
+}
 
 function Checkout() {
   const location = useLocation();
@@ -15,6 +87,8 @@ function Checkout() {
     );
     setCart(updatedCartItems);
   };
+
+  
 
   const decreaseQuantity = (item) => {
     const updatedCartItems = cart
@@ -106,7 +180,7 @@ function Checkout() {
           ₹ {(getTotalPrice() + getTotalPrice() * 0.05 + 5).toFixed(2)}
         </div>
       </div>
-      <div className="text-center bg-green-500 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600">
+      <div className="text-center bg-green-500 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600" onClick={displayRazorpay}>
         CheckOut
       </div>
     </div>

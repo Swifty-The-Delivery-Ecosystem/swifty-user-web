@@ -5,6 +5,7 @@ import { useState } from "react";
 import MenuList from "../components/menuList";
 import ShoppingCart from "../components/shoppingCart";
 import CartSummary from "../components/cart_summary";
+import { Card, CardBody, CardFooter, CardHeader } from "@material-tailwind/react";
 
 function RestaurantScreen() {
   const location = useLocation();
@@ -37,6 +38,12 @@ function RestaurantScreen() {
 
   const restaurant = location.state.restaurant;
   return (
+    <>
+    <Card className="w-9/10 mx-12 py-9 my-10 content-start justify-between bg-purple-100">
+      <CardHeader className="font-bold text-xl px-10 py-2 w-max"> {restaurant.name}</CardHeader>
+      <CardBody > </CardBody>
+      <CardFooter></CardFooter>
+    </Card>
     <div className="">
       <div className="min-h-screen ">
         <MenuList
@@ -56,6 +63,7 @@ function RestaurantScreen() {
         )}
       </div>
     </div>
+    </>
   );
 }
 

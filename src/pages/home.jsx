@@ -4,6 +4,7 @@ import star from "../assets/images/star.png";
 import "../assets/css/home.css";
 import { motion, useScroll } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { ShimmerSimpleGallery } from "react-shimmer-effects";
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -57,7 +58,7 @@ const Home = () => {
         </div>
 
         <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
-          {restaurants.map((restaurant, index) => (
+          { restaurants.length !== 0 ? restaurants.map((restaurant, index) => (
             <li onClick={ ()=>{navigate('/restaurant', {state: {restaurant : restaurant }})}} key={index} className="rounded-xl hover:cursor-pointer items-center">
               <img
                 src={restaurant.image_url}
@@ -75,7 +76,7 @@ const Home = () => {
                 </div>
               </div>
             </li>
-          ))}
+          )) : <ShimmerSimpleGallery card imageHeight={200} caption />}
         </ul>
         <motion.div
           className="progress-indicator-line"

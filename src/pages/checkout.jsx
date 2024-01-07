@@ -85,13 +85,11 @@ function Checkout() {
   useEffect(() => {
     const fetchItemDetails = async () => {
       try {
-        const itemIds = cart.map((item) => item.id);
+        const cartItemsString = JSON.stringify(cart);
         const response = await axios.get(
-          `http://localhost:4005/api/customer/getitem?itemIds=${itemIds.join(
-            ","
-          )}`
+          `http://localhost:4005/api/customer/getitem?cartItems=${cartItemsString}`
         );
-        setItemDetails(response.data);
+        setItemDetails(response.data["finalitems"]);
       } catch (error) {
         console.error("Error fetching item details:", error);
       }
@@ -99,15 +97,14 @@ function Checkout() {
 
     fetchItemDetails();
   }, [cart]);
+
   useEffect(() => {
     const fetchTotalCartPrice = async () => {
       try {
-        const response = await axios.post(
-          "http://localhost:4005/api/customer/cartprice",
-          {
-            restaurantID: restaurant._id, // Assuming you have the restaurant ID
-            cartItems: cart.map((item) => item.id),
-          }
+        const cartItemsString = JSON.stringify(cartItems);
+
+        const response = await axios.get(
+          `http://localhost:4005/api/customer/cartprice?restaurantID=${restaurant._id}&cartItems=${cartItemsString}`
         );
 
         setTotalCartPrice(response.data.totalPrice);
@@ -117,7 +114,8 @@ function Checkout() {
     };
 
     fetchTotalCartPrice();
-  }, [restaurant, cart]);
+  }, [restaurant, cartItems]);
+
   const increaseQuantity = (item) => {
     const updatedCartItems = cart.map((cartItem) =>
       cartItem.id === item.id
@@ -148,7 +146,7 @@ function Checkout() {
       <div className="flex justify-start gap-6 px-8 py-4 items-start">
         <div>
           <img
-            className="w-40 h-32 md:h-40"
+            className="w-80 h-32 md:h-40"
             src={restaurant.image_url}
             alt=""
           />
@@ -172,8 +170,12 @@ function Checkout() {
           <div key={item.id} className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <img
-                src={item.type === 0 ? "veg-image-url" : "non-veg-image-url"}
-                alt={item.isVegetarian ? "Vegetarian" : "Non-Vegetarian"}
+                src={
+                  item.type === 2
+                    ? "https://i.pngimg.me/thumb/f/720/m2i8b1A0m2m2Z5Z5.jpg"
+                    : "https://spng.pinpng.com/pngs/s/45-459786_non-veg-icon-circle-hd-png-download.png"
+                }
+                alt="type symbol"
                 className="w-6 h-6"
               />
               <div className="text-lg font-bold">{item.name}</div>
@@ -184,7 +186,8 @@ function Checkout() {
                   -
                 </button>
 
-                {item.quantity}
+                {cart.find((cartItem) => cartItem.id === item.item_id)
+                  ?.quantity || 0}
                 <button className="pl-4" onClick={() => increaseQuantity(item)}>
                   +
                 </button>
@@ -200,13 +203,13 @@ function Checkout() {
           <div className="flex mt-4 justify-between">
             <div className="font-extralight text-gray-600">Item Total</div>
             <div className="font-extralight text-gray-600">
-              ₹ {getTotalPrice()}
+              ₹ {totalCartPrice}
             </div>
           </div>
           <div className="flex mb-4 mt-4 justify-between">
             <div className="font-extralight text-gray-600">Delivery Fee</div>
             <div className="font-extralight text-gray-600">
-              ₹ {(getTotalPrice() * 0.05).toFixed(2)}
+              ₹ {(totalCartPrice * 0.05).toFixed(2)}
             </div>
           </div>
         </div>
@@ -218,7 +221,7 @@ function Checkout() {
       <div className="flex px-8 mb-4 mt-4 justify-between">
         <div className="font-bold text-xl ">To Pay</div>
         <div className="font-bold text-xl">
-          ₹ {(getTotalPrice() + getTotalPrice() * 0.05 + 5).toFixed(2)}
+          ₹ {(totalCartPrice + totalCartPrice * 0.05 + 5).toFixed(2)}
         </div>
       </div>
       <div

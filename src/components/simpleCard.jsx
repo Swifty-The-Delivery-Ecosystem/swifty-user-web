@@ -4,9 +4,9 @@ import {
   CardBody,
   Typography,
   Button,
-  Chip
+  Chip,
 } from "@material-tailwind/react";
- 
+
 // export function HorizontalCard({item}) {
 //   return (
 //     <Card className="my-5 w-full  flex-row">
@@ -56,11 +56,19 @@ import {
 //   );
 // }
 
+import React, { useState , useEffect } from "react";
 
-import React, { useState } from 'react';
-
-const MenuItem = ({ item, onAddToCart, onRemoveFromCart }) => {
-  const [quantity, setQuantity] = useState(0);
+const MenuItem = ({ item, onAddToCart, onRemoveFromCart , cartItems , restaurantId}) => {
+  const [quantity, setQuantity] = useState(
+    cartItems.find((cartItem) => cartItem.id === item.item_id)?.quantity || 0
+  );
+  useEffect(() => {
+    // Check if the item is already in the cart and update the quantity
+    const cartItem = cartItems.find((cartItem) => cartItem.id === item.item_id);
+    if (cartItem) {
+      setQuantity(cartItem.quantity);
+    }
+  }, [item, cartItems]);
 
   const addToCart = () => {
     setQuantity(quantity + 1);
@@ -68,38 +76,48 @@ const MenuItem = ({ item, onAddToCart, onRemoveFromCart }) => {
   };
 
   const removeFromCart = () => {
-    if (quantity > 0) {
+    if (quantity > 0) { 
       setQuantity(quantity - 1);
-      onRemoveFromCart(item.id);
+      onRemoveFromCart(item.item_id);
     }
   };
 
   return (
     <Card className="my-5 mx-10 shadow-none">
-    <div className="flex justify-between items-center p-4 border-b">
-      <div className="flex justify-between items-center">
-      <img src={item.image_url} className="w-40 rounded-md"  alt={item.name}/>
-      <div className="items-center px-10">
-        <h3 className="text-lg font-semibold">{item.name}</h3>
-        <p className="text-gray-500 text-sm">{item.description}</p>
+      <div className="flex justify-between items-center p-4 border-b">
+        <div className="flex justify-between items-center">
+          <img
+            src={item.image_url}
+            className="w-40 rounded-md"
+            alt={item.name}
+          />
+          <div className="items-center px-10">
+            <h3 className="text-lg font-semibold">{item.name}</h3>
+            <p className="text-gray-500 text-sm">{item.description}</p>
+          </div>
         </div>
+        <Card className="flex  justify-between items-center bg-white  rounded-md p-2">
+          <div className="flex items-center border-purple-500">
+            <button
+              onClick={addToCart}
+              className=" text-purple-500 font-bold px-2"
+            >
+              {quantity === 0 ? "Add to Cart" : `+`}
+            </button>
+            {quantity > 0 && (
+              <>
+                <div className="px-2 text-purple-500 font-bold">{quantity}</div>
+                <button
+                  onClick={removeFromCart}
+                  className=" text-slate-200 font-bold px-2"
+                >
+                  -
+                </button>
+              </>
+            )}
+          </div>
+        </Card>
       </div>
-      <Card className="flex  justify-between items-center bg-white  rounded-md p-2">
-      <div className="flex items-center border-purple-500">
-        <button onClick={addToCart} className=" text-purple-500 font-bold px-2">
-          {quantity === 0 ? 'Add to Cart' : `+`}
-        </button>
-        {quantity > 0 && (
-          <>
-          <div className="px-2 text-purple-500 font-bold">{quantity}</div>
-          <button onClick={removeFromCart} className=" text-slate-200 font-bold px-2">
-            -
-          </button>
-          </>
-        )}
-        </div>
-      </Card>
-    </div>
     </Card>
   );
 };

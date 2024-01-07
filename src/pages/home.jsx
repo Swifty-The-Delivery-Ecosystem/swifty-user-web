@@ -15,15 +15,12 @@ const Home = () => {
   useEffect(() => {
     const locationParam = 1;
 
-    fetch(
-      `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/restaurants?location=${locationParam}`,
-      {
-        method: "get",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    fetch(`http://127.0.0.1:4005/api/customer/restaurants?location=1`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         // Repeat the restaurants 10 times
@@ -58,25 +55,37 @@ const Home = () => {
         </div>
 
         <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
-          { restaurants.length !== 0 ? restaurants.map((restaurant, index) => (
-            <li onClick={ ()=>{navigate('/restaurant', {state: {restaurant : restaurant }})}} key={index} className="rounded-xl hover:cursor-pointer items-center">
-              <img
-                src={restaurant.image_url}
-                alt={restaurant.name}
-                className=" w-3/4 rounded-xl mb-2 "
-              />
-              <div className="text-left">
-                <div className="text-lg font-bold">{restaurant.name}</div>
-                <div className="text-[16px] flex gap-2 items-center text-gray-500">
-                  <img src={star} alt="" className="w-6 h-6" />{" "}
-                  {restaurant.rating.$numberDecimal.toString()}
+          {restaurants.length !== 0 ? (
+            restaurants.map((restaurant, index) => (
+              <li
+                onClick={() => {
+                  navigate("/restaurant", {
+                    state: { restaurant: restaurant },
+                  });
+                }}
+                key={index}
+                className="rounded-xl hover:cursor-pointer items-center"
+              >
+                <img
+                  src={restaurant.image_url}
+                  alt={restaurant.name}
+                  className=" w-3/4 rounded-xl mb-2 "
+                />
+                <div className="text-left">
+                  <div className="text-lg font-bold">{restaurant.name}</div>
+                  <div className="text-[16px] flex gap-2 items-center text-gray-500">
+                    <img src={star} alt="" className="w-6 h-6" />{" "}
+                    {restaurant.rating.$numberDecimal.toString()}
+                  </div>
+                  <div className="text-[14px] text-gray-600 font-medium mb-1">
+                    {restaurant.description}
+                  </div>
                 </div>
-                <div className="text-[14px] text-gray-600 font-medium mb-1">
-                  {restaurant.description}
-                </div>
-              </div>
-            </li>
-          )) : <ShimmerSimpleGallery card imageHeight={200} caption />}
+              </li>
+            ))
+          ) : (
+            <ShimmerSimpleGallery card imageHeight={200} caption />
+          )}
         </ul>
         <motion.div
           className="progress-indicator-line"

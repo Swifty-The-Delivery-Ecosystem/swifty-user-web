@@ -23,18 +23,18 @@ function RestaurantScreen() {
   };
 
   const addToCart = (item) => {
-    const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+    const existingItem = cartItems.find((cartItem) => cartItem.id === item.item_id);
 
     if (existingItem) {
       const updatedCartItems = cartItems.map((cartItem) =>
-        cartItem.id === item.id
+        cartItem.id === item.item_id
           ? { ...cartItem, quantity: cartItem.quantity + 1 }
           : cartItem
       );
       setCartItems(updatedCartItems);
       updateLocalStorage(updatedCartItems);
     } else {
-      const updatedCartItems = [...cartItems, { id: item.id, quantity: 1 }];
+      const updatedCartItems = [...cartItems, { id: item.item_id, quantity: 1 }];
       setCartItems(updatedCartItems);
       updateLocalStorage(updatedCartItems);
     }
@@ -72,6 +72,8 @@ function RestaurantScreen() {
             menuItems={restaurant.items}
             onAddToCart={addToCart}
             onRemoveFromCart={removeFromCart}
+            cartItems={cartItems}
+            restaurantId = {restaurant._id}
           />
         </div>
 

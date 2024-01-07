@@ -9,22 +9,13 @@ function CartSummary({ cartItems, restaurant }) {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
-  const getTotalPrice = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.quantity * item.price,
-      0
-    );
-  };
-  console.log("hello", restaurant._id, cartItems);
   useEffect(() => {
     const fetchTotalCartPrice = async () => {
       try {
+        const cartItemsString = JSON.stringify(cartItems);
+
         const response = await axios.get(
-          "http://localhost:4005/api/customer/cartprice",
-          {
-            restaurantID: restaurant._id, // Assuming you have the restaurant ID
-            cartItems: cartItems,
-          }
+          `http://localhost:4005/api/customer/cartprice?restaurantID=${restaurant._id}&cartItems=${cartItemsString}`
         );
 
         setcartprice(response.data.totalPrice);

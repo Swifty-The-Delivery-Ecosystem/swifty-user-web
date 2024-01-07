@@ -15,7 +15,7 @@ function CartSummary({ cartItems, restaurant }) {
         const cartItemsString = JSON.stringify(cartItems);
 
         const response = await axios.get(
-          `http://localhost:4005/api/customer/cartprice?restaurantID=${restaurant._id}&cartItems=${cartItemsString}`
+          `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/cartprice?restaurantID=${restaurant._id}&cartItems=${cartItemsString}`
         );
 
         setcartprice(response.data.totalPrice);
@@ -34,7 +34,7 @@ function CartSummary({ cartItems, restaurant }) {
           state: { restaurant: restaurant, cartItems: cartItems },
         });
       }}
-      className="text-center cursor-pointer px-6 items-center rounded-t-lg flex justify-between bg-green-400 text-white py-4 w-1/2 mx-auto bottom-0 sticky"
+      className="text-center cursor-pointer px-6 items-center rounded-t-lg flex justify-between bg-green-400 text-white py-4 md:w-1/2 mx-auto bottom-0 sticky"
     >
       <div className="text-lg text-semibold">
         {getTotalItems()} Items | ₹ {cartprice}

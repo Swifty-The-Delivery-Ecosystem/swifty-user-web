@@ -15,12 +15,15 @@ const Home = () => {
   useEffect(() => {
     const locationParam = 1;
 
-    fetch(`http://127.0.0.1:4005/api/customer/restaurants?location=1`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/restaurants?location=1`,
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Repeat the restaurants 10 times

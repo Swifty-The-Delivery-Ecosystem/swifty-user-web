@@ -69,12 +69,11 @@ const MenuItem = ({ item, onAddToCart, onRemoveFromCart , cartItems , restaurant
       setQuantity(cartItem.quantity);
     }
   }, [item, cartItems]);
-
   const addToCart = () => {
     setQuantity(quantity + 1);
     onAddToCart(item);
   };
-
+  
   const removeFromCart = () => {
     if (quantity > 0) { 
       setQuantity(quantity - 1);

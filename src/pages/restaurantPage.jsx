@@ -31,7 +31,7 @@ function RestaurantScreen() {
           ? { ...cartItem, quantity: cartItem.quantity + 1 }
           : cartItem
       );
-      setCartItems(updatedCartItems);
+      setCartItems([...updatedCartItems]);
       updateLocalStorage(updatedCartItems);
     } else {
       const updatedCartItems = [...cartItems, { id: item.item_id, quantity: 1 }];
@@ -63,8 +63,6 @@ function RestaurantScreen() {
         <CardHeader className="font-bold text-xl px-10 py-2 w-max">
           {restaurant.name}
         </CardHeader>
-        <CardBody></CardBody>
-        <CardFooter></CardFooter>
       </Card>
       <div className="">
         <div className="min-h-screen ">
@@ -73,7 +71,6 @@ function RestaurantScreen() {
             onAddToCart={addToCart}
             onRemoveFromCart={removeFromCart}
             cartItems={cartItems}
-            restaurantId = {restaurant._id}
           />
         </div>
 

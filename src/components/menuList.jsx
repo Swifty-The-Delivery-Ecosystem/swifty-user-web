@@ -18,3 +18,4 @@ const MenuList = ({ menuItems, onAddToCart, onRemoveFromCart , cartItems , resta
 };
 
 export default MenuList;
+

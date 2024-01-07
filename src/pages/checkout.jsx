@@ -87,7 +87,7 @@ function Checkout() {
       try {
         const cartItemsString = JSON.stringify(cart);
         const response = await axios.get(
-          `http://localhost:4005/api/customer/getitem?cartItems=${cartItemsString}`
+          `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/getitem?cartItems=${cartItemsString}`
         );
         setItemDetails(response.data["finalitems"]);
       } catch (error) {
@@ -104,7 +104,7 @@ function Checkout() {
         const cartItemsString = JSON.stringify(cartItems);
 
         const response = await axios.get(
-          `http://localhost:4005/api/customer/cartprice?restaurantID=${restaurant._id}&cartItems=${cartItemsString}`
+          `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/cartprice?restaurantID=${restaurant._id}&cartItems=${cartItemsString}`
         );
 
         setTotalCartPrice(response.data.totalPrice);

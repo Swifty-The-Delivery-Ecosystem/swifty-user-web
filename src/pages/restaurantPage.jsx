@@ -12,10 +12,19 @@ import CartSummary from "../components/cart_summary";
 function RestaurantScreen() {
   const location = useLocation();
   const [cartItems, setCartItems] = useState([]);
+  console.log(cartItems, "helloo");
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(storedCart);
+    if (
+      storedCart.length > 0 &&
+      storedCart[0].restaurant_id !== restaurant.id
+    ) {
+      alert("Clearing the cart because restaurant_id is different.");
+      localStorage.removeItem("cart");
+      setCartItems([]);
+    }
   }, []);
 
   const updateLocalStorage = (updatedCartItems) => {
@@ -23,7 +32,9 @@ function RestaurantScreen() {
   };
 
   const addToCart = (item) => {
-    const existingItem = cartItems.find((cartItem) => cartItem.id === item.item_id);
+    const existingItem = cartItems.find(
+      (cartItem) => cartItem.id === item.item_id
+    );
 
     if (existingItem) {
       const updatedCartItems = cartItems.map((cartItem) =>
@@ -34,7 +45,10 @@ function RestaurantScreen() {
       setCartItems([...updatedCartItems]);
       updateLocalStorage(updatedCartItems);
     } else {
-      const updatedCartItems = [...cartItems, { id: item.item_id, quantity: 1 }];
+      const updatedCartItems = [
+        ...cartItems,
+        { id: item.item_id, quantity: 1, restaurant_id: item.restaurant_id },
+      ];
       setCartItems(updatedCartItems);
       updateLocalStorage(updatedCartItems);
     }
@@ -56,6 +70,7 @@ function RestaurantScreen() {
   };
 
   const restaurant = location.state.restaurant;
+  console.log(cartItems.length === 0);
 
   return (
     <>
@@ -71,6 +86,11 @@ function RestaurantScreen() {
             onAddToCart={addToCart}
             onRemoveFromCart={removeFromCart}
             cartItems={cartItems}
+            rid={
+              cartItems.length === 0
+                ? "emptycart"
+                : cartItems[0]["restaurant_id"]
+            }
           />
         </div>
 

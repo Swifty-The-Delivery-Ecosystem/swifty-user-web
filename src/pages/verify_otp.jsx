@@ -5,54 +5,57 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-function SignUp() {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState();
-  const [email, setEmail] = useState("");
+function Verify() {
+  const [otp, setOtp] = useState();
+  const location = useLocation();
+  const nav = useNavigate();
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
-  };
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-  const handlePhoneChange = (e) => {
-    setPhone(e.target.value);
-  };
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const email = location.state.email;
+  const handleOtpChange = (e) => {
+    setOtp(e.target.value);
   };
 
   const sendLoginRequest = () => {
-    const url = "http://127.0.0.1:8000/api/userAuth/register";
+    console.log(email);
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const url = "http://127.0.0.1:8000/api/userAuth/verify";
     const data = {
-      name: username,
-      email: email,
-      password: password,
-      phone: phone,
+      email: String(email),
+      in_otp: Number(otp),
     };
 
     axios
-      .post(url, data)
+      .post(url, data, { headers })
       .then((response) => {
-        // Show success toast
-        toast.success(response.data.message, {
-          position: toast.POSITION.TOP_CENTER,
-        });
-        navigate("/verify" , {state: {email: email}} );
+        // Check if the response type is success
+        if (response.data && response.data.type === "success") {
+          // Set token in local storage
+          localStorage.setItem("token", response.data.data.token);
+          nav("/");
+
+          // Show success toast
+          toast.success(response.data.message, {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        } else {
+          // Show error toast for unexpected response
+          toast.error("Unexpected response format", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        }
       })
       .catch((error) => {
-        // Show error toast
+        // Show error toast for network or server errors
         toast.error(error.message, {
           position: toast.POSITION.TOP_CENTER,
         });
       });
   };
-
 
   return (
     <div className="min-h-screen mt-8 flex flex-wrap">
@@ -81,70 +84,22 @@ function SignUp() {
             </div>
             <div>
               <div class="block mx-4 mt-2 mb-2 text-sm font-medium text-gray-900">
-                Your Username
-              </div>
-              <div className="px-4">
-                <input
-                  type="text"
-                  value={username}
-                  name="username"
-                  id="username"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="John"
-                  onChange={handleUsernameChange}
-                  required=""
-                />
-              </div>
-
-              <div class="block mx-4 mt-2 mb-2 text-sm font-medium text-gray-900">
-                Your Phone Number
+                Your OTP Number
               </div>
               <div className="px-4">
                 <input
                   type="number"
-                  value={phone}
-                  name="phone"
-                  id="phone"
+                  value={otp}
+                  name="otp"
+                  id="otp"
                   class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="Phone Number"
-                  onChange={handlePhoneChange}
-                  required=""
-                />
-              </div>
-
-              <div class="block mx-4 mt-2 mb-2 text-sm font-medium text-gray-900">
-                Your email
-              </div>
-              <div className="px-4">
-                <input
-                  type="email"
-                  value={email}
-                  name="email"
-                  id="email"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="name@company.com"
-                  onChange={handleEmailChange}
+                  placeholder="Otp Number"
+                  onChange={handleOtpChange}
                   required=""
                 />
               </div>
             </div>
-            <div>
-              <div class="block mx-4 mt-2 mb-2 text-sm font-medium text-gray-900">
-                Password
-              </div>
-              <div className="px-4">
-                <input
-                  type="password"
-                  value={password}
-                  name="password"
-                  id="password"
-                  placeholder="••••••••"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  onChange={handlePasswordChange}
-                  required=""
-                />
-              </div>
-            </div>
+            <div></div>
             <div className="my-1 text-center font-light">or</div>
             <div className="border-2 cursor-pointer flex justify-center hover:bg-gray-50 rounded-lg mb-2 mx-4 text-center py-2 px-auto">
               <FcGoogle size={20} />{" "}
@@ -185,4 +140,4 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+export default Verify;

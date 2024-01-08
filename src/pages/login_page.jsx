@@ -4,38 +4,47 @@ import { FaTwitter } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
   const nav = useNavigate();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
   };
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
 
-//   const sendLoginRequest = () => {
-//     const url = "http://127.0.0.1:5000/users/login";
-//     const data = {
-//       username: username,
-//       password: password,
-//     };
+  const sendLoginRequest = () => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const url = "http://127.0.0.1:8000/api/userAuth/login";
+    const data = {
+      email: email,
+      password: Number(password),
+    };
 
-//     axios
-//       .post(url, data)
-//       .then((response) => {
-//         console.log(response.data.message);
-//         sessionStorage.setItem("username", data.username);
-//         nav("/landing");
-//       })
-//       .catch((error) => {
-//         console.error(error.message);
-//       });
-//   };
+    axios
+      .post(url, data, { headers })
+      .then((response) => {
+        // Set token in local storage
+        localStorage.setItem("token", response.data.data.token);
+        nav("/");
+
+        // Show success toast
+        toast.success(response.data.message, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  };
 
   return (
     <div className="mt-8 flex flex-wrap">
@@ -51,7 +60,10 @@ function Login() {
           <div className="bg-white pb-8 md:mx-16 mx-2 rounded-xl">
             <div className="pt-4 px-4">
               <span className="text-2xl text-orange-500 font-bold">Swifty</span>
-              <span className="text-2xl text-blue-600 font-bold"> Ecosystem</span>
+              <span className="text-2xl text-blue-600 font-bold">
+                {" "}
+                Ecosystem
+              </span>
             </div>
             <div className="text-3xl font-bold pt-2 px-4">Welcome back</div>
             <div className="px-4 font-light">
@@ -67,12 +79,12 @@ function Login() {
               <div className="px-4">
                 <input
                   type="text"
-                  value={username}
-                  name="username"
-                  id="username"
+                  value={email}
+                  name="email"
+                  id="email"
                   class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="John07"
-                  onChange={handleUsernameChange}
+                  placeholder="John07@gmail.com"
+                  onChange={handleEmailChange}
                   required=""
                 />
               </div>
@@ -128,7 +140,7 @@ function Login() {
               </a>
             </div>
             <div
-            //   onClick={sendLoginRequest}
+              onClick={sendLoginRequest}
               className="text-white cursor-pointer bg-blue-600 hover:bg-blue-700 mt-4 rounded-lg mx-4 text-center py-2 px-auto"
             >
               Sign in to your account

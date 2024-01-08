@@ -56,12 +56,13 @@ import {
 //   );
 // }
 
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
-const MenuItem = ({ item, onAddToCart, onRemoveFromCart , cartItems , restaurantId}) => {
+const MenuItem = ({ item, onAddToCart, onRemoveFromCart, cartItems, rid }) => {
   const [quantity, setQuantity] = useState(
     cartItems.find((cartItem) => cartItem.id === item.item_id)?.quantity || 0
   );
+
   useEffect(() => {
     // Check if the item is already in the cart and update the quantity
     const cartItem = cartItems.find((cartItem) => cartItem.id === item.item_id);
@@ -70,12 +71,19 @@ const MenuItem = ({ item, onAddToCart, onRemoveFromCart , cartItems , restaurant
     }
   }, [item, cartItems]);
   const addToCart = () => {
-    setQuantity(quantity + 1);
-    onAddToCart(item);
+    console.log(rid);
+
+    if (rid != "emptycart" && rid !== item.restaurant_id) {
+      alert("hey there ");
+      // localStorage.removeItem("cart");
+    } else {
+      setQuantity(quantity + 1);
+      onAddToCart({ ...item, restaurant_id: item.restaurant_id });
+    }
   };
-  
+
   const removeFromCart = () => {
-    if (quantity > 0) { 
+    if (quantity > 0) {
       setQuantity(quantity - 1);
       onRemoveFromCart(item.item_id);
     }

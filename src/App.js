@@ -8,6 +8,7 @@ import Navbar from "./components/navbar";
 import Home from "./pages/home";
 import MainScreen from "./pages/mainPage";
 import Checkout from "./pages/checkout";
+import Verify from "./pages/verify_otp";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/home" element={<MainScreen />} />
         <Route path="/restaurant" element={<RestaurantScreen />} />
         <Route path="/cart" element={<Checkout />} />
+        <Route path="/verify" element={<Verify />} />
       </Routes>
     </BrowserRouter>
   );

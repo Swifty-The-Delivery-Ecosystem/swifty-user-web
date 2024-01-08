@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "./Logo";
 import { BsFillCartFill } from "react-icons/bs";
@@ -8,13 +8,24 @@ import { SimpleDropdown } from "react-js-dropdavn";
 import "react-js-dropdavn/dist/index.css";
 
 const Navbar = ({ cartItemsCountProp }) => {
-  const [cartItemsCount, setCartItemsCount] = useState(cartItemsCountProp);
+  const [cartItemsCount, setCartItemsCount] = useState(0);
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState();
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
   };
+
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem("cart"));
+    if (cartItems !== null) {
+      const itemTotal = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+      );
+      setCartItemsCount(itemTotal);
+    }
+  }, [cartItemsCountProp]);
 
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);

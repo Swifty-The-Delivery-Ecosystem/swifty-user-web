@@ -1,7 +1,15 @@
 import React from "react";
 import MenuItem from "./simpleCard";
 
-const MenuList = ({ menuItems, onAddToCart, onRemoveFromCart , cartItems , restaurantId}) => {
+const MenuList = ({
+  menuItems,
+  onAddToCart,
+  onRemoveFromCart,
+  cartItems,
+  rid,
+}) => {
+  // const rid = cartItems[0]["restaurant_id"];
+  console.log(rid);
   return (
     <div>
       {menuItems.map((item) => (
@@ -10,7 +18,7 @@ const MenuList = ({ menuItems, onAddToCart, onRemoveFromCart , cartItems , resta
           onAddToCart={onAddToCart}
           onRemoveFromCart={onRemoveFromCart}
           cartItems={cartItems}
-          restaurantId = {restaurantId}
+          rid={rid}
         />
       ))}
     </div>
@@ -18,4 +26,3 @@ const MenuList = ({ menuItems, onAddToCart, onRemoveFromCart , cartItems , resta
 };
 
 export default MenuList;
-

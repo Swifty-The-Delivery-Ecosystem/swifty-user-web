@@ -6,8 +6,15 @@ function CartSummary({ cartItems, restaurant }) {
   const navigate = useNavigate();
   const [cartprice, setcartprice] = useState(0);
   const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
+    if (
+      JSON.parse(
+        localStorage.getItem("cart") !== null || !localStorage.getItem.isEmpty()
+      )
+    ) {
+      return cartItems.reduce((total, item) => total + item.quantity, 0);
+    }
   };
+  const rid = cartItems[0].restaurant_id;
 
   useEffect(() => {
     const fetchTotalCartPrice = async () => {
@@ -15,7 +22,7 @@ function CartSummary({ cartItems, restaurant }) {
         const cartItemsString = JSON.stringify(cartItems);
 
         const response = await axios.get(
-          `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/cartprice?restaurantID=${restaurant._id}&cartItems=${cartItemsString}`
+          `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/cartprice?restaurantID=${rid}&cartItems=${cartItemsString}`
         );
 
         setcartprice(response.data.totalPrice);

@@ -90,6 +90,7 @@ function Checkout() {
           `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/getitem?cartItems=${cartItemsString}`
         );
         setItemDetails(response.data["finalitems"]);
+        console.log(response.data["finalitems"][0].restaurant_id);
       } catch (error) {
         console.error("Error fetching item details:", error);
       }
@@ -137,9 +138,9 @@ function Checkout() {
     setCart(updatedCartItems);
   };
 
-  const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.quantity * item.price, 0);
-  };
+  // const getTotalPrice = () => {
+  //   return cart.reduce((total, item) => total + item.quantity * item.price, 0);
+  // };
 
   return cart.length > 0 ? (
     <div className="mx-auto bg-white py-6 md:w-1/2 shadow-lg my-4">

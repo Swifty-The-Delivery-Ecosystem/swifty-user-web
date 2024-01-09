@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitter } from "react-icons/fa";
 import { useState } from "react";
@@ -17,7 +17,14 @@ function Verify() {
   const handleOtpChange = (e) => {
     setOtp(e.target.value);
   };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
+    if (token) {
+      // Redirect to home page if token is present
+      nav("/");
+    }
+  }, [nav]);
   const sendLoginRequest = () => {
     console.log(email);
     const headers = {

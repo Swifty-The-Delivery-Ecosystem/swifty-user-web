@@ -72,14 +72,8 @@ const MenuItem = ({ item, onAddToCart, onRemoveFromCart, cartItems, rid }) => {
   }, [item, cartItems]);
   const addToCart = () => {
     console.log(rid);
-
-    if (rid != "emptycart" && rid !== item.restaurant_id) {
-      alert("hey there ");
-      // localStorage.removeItem("cart");
-    } else {
-      setQuantity(quantity + 1);
-      onAddToCart({ ...item, restaurant_id: item.restaurant_id });
-    }
+    setQuantity(quantity + 1);
+    onAddToCart({ ...item, restaurant_id: item.restaurant_id });
   };
 
   const removeFromCart = () => {

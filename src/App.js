@@ -13,7 +13,7 @@ import Verify from "./pages/verify_otp";
 function App() {
   return (
     <BrowserRouter>
-      <Navbar cartItemsCountProp={3} />
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

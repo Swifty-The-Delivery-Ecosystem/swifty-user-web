@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitter } from "react-icons/fa";
 import { useState } from "react";
@@ -27,6 +27,15 @@ function SignUp() {
     setEmail(e.target.value);
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      // Redirect to home page if token is present
+      navigate("/");
+    }
+  }, [navigate]);
+
   const sendLoginRequest = () => {
     const url = "http://127.0.0.1:8000/api/userAuth/register";
     const data = {
@@ -43,7 +52,7 @@ function SignUp() {
         toast.success(response.data.message, {
           position: toast.POSITION.TOP_CENTER,
         });
-        navigate("/verify" , {state: {email: email}} );
+        navigate("/verify", { state: { email: email } });
       })
       .catch((error) => {
         // Show error toast
@@ -52,7 +61,6 @@ function SignUp() {
         });
       });
   };
-
 
   return (
     <div className="min-h-screen mt-8 flex flex-wrap">

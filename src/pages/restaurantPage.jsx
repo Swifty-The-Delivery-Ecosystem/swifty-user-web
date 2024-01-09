@@ -17,14 +17,6 @@ function RestaurantScreen() {
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(storedCart);
-    if (
-      storedCart.length > 0 &&
-      storedCart[0].restaurant_id !== restaurant.id
-    ) {
-      alert("Clearing the cart because restaurant_id is different.");
-      localStorage.removeItem("cart");
-      setCartItems([]);
-    }
   }, []);
 
   const updateLocalStorage = (updatedCartItems) => {

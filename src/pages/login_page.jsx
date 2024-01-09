@@ -1,4 +1,4 @@
-import React from "react";
+import React , {useEffect} from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitter } from "react-icons/fa";
 import { useState } from "react";
@@ -18,6 +18,14 @@ function Login() {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      // Redirect to home page if token is present
+      nav("/");
+    }
+  }, [nav]);
 
   const sendLoginRequest = () => {
     const headers = {

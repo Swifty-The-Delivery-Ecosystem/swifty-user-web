@@ -1,4 +1,4 @@
-import React , {useEffect} from "react";
+import React, { useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitter } from "react-icons/fa";
 import { useState } from "react";
@@ -31,10 +31,10 @@ function Login() {
     const headers = {
       "Content-Type": "application/json",
     };
-    const url = "http://127.0.0.1:8000/api/userAuth/login";
+    const url = "http://127.0.0.1:5000/api/userAuth/login";
     const data = {
       email: email,
-      password: Number(password),
+      password: password,
     };
 
     axios

@@ -30,7 +30,7 @@ function Verify() {
     const headers = {
       "Content-Type": "application/json",
     };
-    const url = "http://127.0.0.1:8000/api/userAuth/verify";
+    const url = "http://127.0.0.1:5000/api/userAuth/verify";
     const data = {
       email: String(email),
       in_otp: Number(otp),

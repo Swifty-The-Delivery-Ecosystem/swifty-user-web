@@ -33,7 +33,7 @@ const Navbar = () => {
   }, []);
 
   const fetchCurrentUser = (token) => {
-    fetch("http://localhost:8000/api/userAuth/currentUser", {
+    fetch("http://localhost:5000/api/userAuth/currentUser", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

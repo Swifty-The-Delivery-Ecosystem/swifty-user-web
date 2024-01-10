@@ -6,13 +6,13 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import { SimpleDropdown } from "react-js-dropdavn";
 import "react-js-dropdavn/dist/index.css";
+import { useCart } from "../context/cartcontext";
 
 const Navbar = () => {
-  const [cartItemsCount, setCartItemsCount] = useState(0);
-  const [cartItems, setCartItems] = useState([]);
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState();
   const [userData, setUserData] = useState(null);
+  const { cartItems } = useCart();
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
@@ -22,18 +22,14 @@ const Navbar = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      // No token found, redirect to login or handle as needed
-      // For example, navigate("/login");
       return;
     }
 
-    // Fetch user data using the token
     fetchCurrentUser(token);
-    // Your existing code for fetching restaurants can remain here
   }, []);
 
   const fetchCurrentUser = (token) => {
-    fetch("http://localhost:5000/api/userAuth/currentUser", {
+    fetch("https://auth-six-pi.vercel.app/api/userAuth/currentUser", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -44,22 +40,9 @@ const Navbar = () => {
       .then((data) => {
         console.log("Current User:", data.data.user);
         setUserData(data.data.user);
-        // You can set the user data in state if needed
       })
       .catch((error) => console.error("Error fetching current user:", error));
   };
-
-  useEffect(() => {
-    const cartItems = JSON.parse(localStorage.getItem("cart"));
-    setCartItems(cartItems);
-    if (cartItems !== null) {
-      const itemTotal = cartItems.reduce(
-        (total, item) => total + item.quantity,
-        0
-      );
-      setCartItemsCount(itemTotal);
-    }
-  }, [cartItemsCount]);
 
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
@@ -75,7 +58,7 @@ const Navbar = () => {
     },
     {
       link: userData ? "/" : "/login",
-      name: userData ? userData.name : "Sign in", // Use user's name if available, otherwise use "Sign in"
+      name: userData ? userData.name : "Sign in",
     },
   ];
   const locations = [
@@ -169,7 +152,7 @@ const Navbar = () => {
               >
                 <BsFillCartFill className="text-4xl text-green-700" />
                 <div className="absolute text-white text-xs inset-0 flex justify-center items-center font-bold">
-                  {cartItemsCount}
+                  {cartItems.reduce((total, item) => total + item.quantity, 0)}
                 </div>
               </NavLink>
             </div>
@@ -196,7 +179,7 @@ const Navbar = () => {
           <NavLink to="/cart" className="flex relative">
             <BsFillCartFill className="text-4xl text-purple-700" />
             <div className="absolute text-white text-xs inset-0 flex justify-center items-center font-bold">
-              {cartItemsCount}
+              {cartItems.reduce((total, item) => total + item.quantity, 0)}
             </div>
           </NavLink>
         </div>

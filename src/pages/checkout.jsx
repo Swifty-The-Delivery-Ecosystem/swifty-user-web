@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import star from "../assets/images/star.png";
 import axios from "axios";
+import { useCart } from "../context/cartcontext";
+import { useRestaurant } from "../context/restaurant_details";
+import { ShimmerSimpleGallery } from "react-shimmer-effects";
 
 async function displayRazorpay() {
   const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
@@ -76,95 +78,54 @@ function loadScript(src) {
 }
 
 function Checkout() {
-  const location = useLocation();
-  const { restaurant, cartItems } = location.state;
-  const [cart, setCart] = useState(cartItems);
+  const { cartItems, cartPrice, increaseQuantity, decreaseQuantity } =
+    useCart();
+  const { details } = useRestaurant();
+  console.log("mkc", details);
   const [itemDetails, setItemDetails] = useState([]);
-  const [totalCartPrice, setTotalCartPrice] = useState(0);
 
   useEffect(() => {
-    const fetchItemDetails = async () => {
-      try {
-        const cartItemsString = JSON.stringify(cart);
-        const response = await axios.get(
-          `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/getitem?cartItems=${cartItemsString}`
-        );
-        setItemDetails(response.data["finalitems"]);
-        console.log(response.data["finalitems"][0].restaurant_id);
-      } catch (error) {
-        console.error("Error fetching item details:", error);
-      }
-    };
+    if (cartItems && cartItems.length > 0) {
+      const fetchItemDetails = async () => {
+        try {
+          const cartItemsString = JSON.stringify(cartItems);
+          const response = await axios.get(
+            `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/getitem?cartItems=${cartItemsString}`
+          );
+          setItemDetails(response.data["finalitems"]);
+          console.log("bkc", response.data["finalitems"][0]);
+        } catch (error) {
+          console.error("Error fetching item details:", error);
+        }
+      };
 
-    fetchItemDetails();
-  }, [cart]);
+      fetchItemDetails();
+    }
+  }, [cartItems]);
 
-  useEffect(() => {
-    const fetchTotalCartPrice = async () => {
-      try {
-        const cartItemsString = JSON.stringify(cartItems);
-
-        const response = await axios.get(
-          `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/cartprice?restaurantID=${restaurant._id}&cartItems=${cartItemsString}`
-        );
-
-        setTotalCartPrice(response.data.totalPrice);
-      } catch (error) {
-        console.error("Error fetching total cart price:", error);
-      }
-    };
-
-    fetchTotalCartPrice();
-  }, [restaurant, cartItems]);
-
-  const increaseQuantity = (item) => {
-    const updatedCartItems = cart.map((cartItem) =>
-      cartItem.id === item.id
-        ? { ...cartItem, quantity: cartItem.quantity + 1 }
-        : cartItem
-    );
-    setCart(updatedCartItems);
-  };
-
-  const decreaseQuantity = (item) => {
-    const updatedCartItems = cart
-      .map((cartItem) =>
-        cartItem.id === item.id
-          ? { ...cartItem, quantity: Math.max(cartItem.quantity - 1, 0) }
-          : cartItem
-      )
-      .filter((cartItem) => cartItem.quantity > 0);
-
-    setCart(updatedCartItems);
-  };
-
-  // const getTotalPrice = () => {
-  //   return cart.reduce((total, item) => total + item.quantity * item.price, 0);
-  // };
-
-  return cart.length > 0 ? (
+  return cartItems.length > 0 ? (
     <div className="mx-auto bg-white py-6 md:w-1/2 shadow-lg my-4">
-      <div className="flex justify-start gap-6 px-8 py-4 items-start">
-        <div>
-          <img
-            className="w-80 h-32 md:h-40"
-            src={restaurant.image_url}
-            alt=""
-          />
-        </div>
-        <div className="flex flex-col">
-          <div className="mt-6 md:text-xl text-lg font-bold">
-            {restaurant.name}
+      {details ? (
+        <div className="flex justify-start gap-6 px-8 py-4 items-start">
+          <div>
+            <img className="w-80 h-32 md:h-40" src={details.image_url} alt="" />
           </div>
-          <div className="flex gap-2">
-            <img src={star} alt="" className="w-6 h-6" />{" "}
-            {restaurant.rating.$numberDecimal.toString()}
-          </div>
-          <div className="md:text-lg text-sm font-medium">
-            {restaurant.description}
+          <div className="flex flex-col">
+            <div className="mt-6 md:text-xl text-lg font-bold">
+              {details.name}
+            </div>
+            <div className="flex gap-2">
+              <img src={star} alt="" className="w-6 h-6" />{" "}
+              {details.rating.$numberDecimal.toString()}
+            </div>
+            <div className="md:text-lg text-sm font-medium">
+              {details.description}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <ShimmerSimpleGallery row={1} col={1} card imageHeight={200} caption />
+      )}
 
       <div className="px-8 py-4">
         {itemDetails.map((item) => (
@@ -187,7 +148,7 @@ function Checkout() {
                   -
                 </button>
 
-                {cart.find((cartItem) => cartItem.id === item.item_id)
+                {cartItems.find((cartItem) => cartItem.id === item.item_id)
                   ?.quantity || 0}
                 <button className="pl-4" onClick={() => increaseQuantity(item)}>
                   +
@@ -203,14 +164,12 @@ function Checkout() {
         <div className="border-b-2 px-4 ">
           <div className="flex mt-4 justify-between">
             <div className="font-extralight text-gray-600">Item Total</div>
-            <div className="font-extralight text-gray-600">
-              ₹ {totalCartPrice}
-            </div>
+            <div className="font-extralight text-gray-600">₹ {cartPrice}</div>
           </div>
           <div className="flex mb-4 mt-4 justify-between">
             <div className="font-extralight text-gray-600">Delivery Fee</div>
             <div className="font-extralight text-gray-600">
-              ₹ {(totalCartPrice * 0.05).toFixed(2)}
+              ₹ {(cartPrice * 0.05).toFixed(2)}
             </div>
           </div>
         </div>
@@ -222,7 +181,7 @@ function Checkout() {
       <div className="flex px-8 mb-4 mt-4 justify-between">
         <div className="font-bold text-xl ">To Pay</div>
         <div className="font-bold text-xl">
-          ₹ {(totalCartPrice + totalCartPrice * 0.05 + 5).toFixed(2)}
+          ₹ {(cartPrice + cartPrice * 0.05 + 5).toFixed(2)}
         </div>
       </div>
       <div

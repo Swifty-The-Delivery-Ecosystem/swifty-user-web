@@ -31,7 +31,7 @@ function Login() {
     const headers = {
       "Content-Type": "application/json",
     };
-    const url = "http://127.0.0.1:5000/api/userAuth/login";
+    const url = "https://auth-six-pi.vercel.app/api/userAuth/login";
     const data = {
       email: email,
       password: password,

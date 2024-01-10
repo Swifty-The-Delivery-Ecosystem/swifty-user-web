@@ -9,6 +9,7 @@ import Home from "./pages/home";
 import MainScreen from "./pages/mainPage";
 import Checkout from "./pages/checkout";
 import Verify from "./pages/verify_otp";
+import { CartProvider } from "./context/cartcontext";
 
 function App() {
   return (

@@ -1,68 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-} from "@material-tailwind/react";
+import { Card, CardHeader } from "@material-tailwind/react";
 import MenuList from "../components/menuList";
 import CartSummary from "../components/cart_summary";
-
+import { useCart } from "../context/cartcontext";
 function RestaurantScreen() {
   const location = useLocation();
-  const [cartItems, setCartItems] = useState([]);
-  console.log(cartItems, "helloo");
 
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCartItems(storedCart);
-  }, []);
-
-  const updateLocalStorage = (updatedCartItems) => {
-    localStorage.setItem("cart", JSON.stringify(updatedCartItems));
-  };
-
-  const addToCart = (item) => {
-    const existingItem = cartItems.find(
-      (cartItem) => cartItem.id === item.item_id
-    );
-
-    if (existingItem) {
-      const updatedCartItems = cartItems.map((cartItem) =>
-        cartItem.id === item.item_id
-          ? { ...cartItem, quantity: cartItem.quantity + 1 }
-          : cartItem
-      );
-      setCartItems([...updatedCartItems]);
-      updateLocalStorage(updatedCartItems);
-    } else {
-      const updatedCartItems = [
-        ...cartItems,
-        { id: item.item_id, quantity: 1, restaurant_id: item.restaurant_id },
-      ];
-      setCartItems(updatedCartItems);
-      updateLocalStorage(updatedCartItems);
-    }
-  };
-
-  const removeFromCart = (itemId) => {
-    const updatedCartItems = cartItems.map((item) =>
-      item.id === itemId
-        ? { ...item, quantity: Math.max(0, item.quantity - 1) }
-        : item
-    );
-
-    const filteredCartItems = updatedCartItems.filter(
-      (item) => item.quantity > 0
-    );
-
-    setCartItems(filteredCartItems);
-    updateLocalStorage(filteredCartItems);
-  };
+  const { cartItems } = useCart();
 
   const restaurant = location.state.restaurant;
-  console.log(cartItems.length === 0);
 
   return (
     <>
@@ -73,27 +20,11 @@ function RestaurantScreen() {
       </Card>
       <div className="">
         <div className="min-h-screen ">
-          <MenuList
-            menuItems={restaurant.items}
-            onAddToCart={addToCart}
-            onRemoveFromCart={removeFromCart}
-            cartItems={cartItems}
-            rid={
-              cartItems.length === 0
-                ? "emptycart"
-                : cartItems[0]["restaurant_id"]
-            }
-          />
+          <MenuList menuItems={restaurant.items} />
         </div>
 
         <div className="bottom-0 sticky">
-          {cartItems.length > 0 && (
-            <CartSummary
-              className="bottom-0"
-              restaurant={restaurant}
-              cartItems={cartItems}
-            />
-          )}
+          {cartItems.length > 0 && <CartSummary className="bottom-0" />}
         </div>
       </div>
     </>

@@ -6,6 +6,7 @@ import {
   Button,
   Chip,
 } from "@material-tailwind/react";
+import { useCart } from "../context/cartcontext";
 
 // export function HorizontalCard({item}) {
 //   return (
@@ -58,30 +59,36 @@ import {
 
 import React, { useState, useEffect } from "react";
 
-const MenuItem = ({ item, onAddToCart, onRemoveFromCart, cartItems, rid }) => {
+const MenuItem = ({ item }) => {
+  const { cartItems, increaseQuantity, decreaseQuantity } = useCart();
   const [quantity, setQuantity] = useState(
-    cartItems.find((cartItem) => cartItem.id === item.item_id)?.quantity || 0
+    (cartItems &&
+      cartItems.find((cartItem) => cartItem.id === item.item_id)?.quantity) ||
+      0
   );
 
   useEffect(() => {
-    // Check if the item is already in the cart and update the quantity
-    const cartItem = cartItems.find((cartItem) => cartItem.id === item.item_id);
-    if (cartItem) {
-      setQuantity(cartItem.quantity);
+    if (cartItems) {
+      const cartItem = cartItems.find(
+        (cartItem) => cartItem.id === item.item_id
+      );
+      if (cartItem) {
+        setQuantity(cartItem.quantity);
+      }
     }
   }, [item, cartItems]);
-  const addToCart = () => {
-    console.log(rid);
-    setQuantity(quantity + 1);
-    onAddToCart({ ...item, restaurant_id: item.restaurant_id });
-  };
+  // const addToCart = () => {
+  //   console.log(rid);
+  //   setQuantity(quantity + 1);
+  //   onAddToCart({ ...item, restaurant_id: item.restaurant_id });
+  // };
 
-  const removeFromCart = () => {
-    if (quantity > 0) {
-      setQuantity(quantity - 1);
-      onRemoveFromCart(item.item_id);
-    }
-  };
+  // const removeFromCart = () => {
+  //   if (quantity > 0) {
+  //     setQuantity(quantity - 1);
+  //     onRemoveFromCart(item.item_id);
+  //   }
+  // };
 
   return (
     <Card className="my-5 mx-10 shadow-none">
@@ -100,7 +107,9 @@ const MenuItem = ({ item, onAddToCart, onRemoveFromCart, cartItems, rid }) => {
         <Card className="flex  justify-between items-center bg-white  rounded-md p-2">
           <div className="flex items-center border-purple-500">
             <button
-              onClick={addToCart}
+              onClick={() => {
+                increaseQuantity(item);
+              }}
               className=" text-purple-500 font-bold px-2"
             >
               {quantity === 0 ? "Add to Cart" : `+`}
@@ -109,7 +118,9 @@ const MenuItem = ({ item, onAddToCart, onRemoveFromCart, cartItems, rid }) => {
               <>
                 <div className="px-2 text-purple-500 font-bold">{quantity}</div>
                 <button
-                  onClick={removeFromCart}
+                  onClick={() => {
+                    decreaseQuantity(item);
+                  }}
                   className=" text-slate-200 font-bold px-2"
                 >
                   -

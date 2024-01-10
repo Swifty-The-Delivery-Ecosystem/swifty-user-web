@@ -1,50 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCart } from "../context/cartcontext";
 
-function CartSummary({ cartItems, restaurant }) {
+function CartSummary() {
   const navigate = useNavigate();
-  const [cartprice, setcartprice] = useState(0);
-  const getTotalItems = () => {
-    if (
-      JSON.parse(
-        localStorage.getItem("cart") !== null || !localStorage.getItem.isEmpty()
-      )
-    ) {
-      return cartItems.reduce((total, item) => total + item.quantity, 0);
-    }
-  };
-  const rid = cartItems[0].restaurant_id;
-
-  useEffect(() => {
-    const fetchTotalCartPrice = async () => {
-      try {
-        const cartItemsString = JSON.stringify(cartItems);
-
-        const response = await axios.get(
-          `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/cartprice?restaurantID=${rid}&cartItems=${cartItemsString}`
-        );
-
-        setcartprice(response.data.totalPrice);
-      } catch (error) {
-        console.error("Error fetching total cart price:", error);
-      }
-    };
-
-    fetchTotalCartPrice();
-  }, [restaurant, cartItems]);
+  const { cartItems, cartPrice } = useCart();
 
   return (
     <div
       onClick={() => {
-        navigate("/cart", {
-          state: { restaurant: restaurant, cartItems: cartItems },
-        });
+        navigate("/cart");
       }}
       className="text-center cursor-pointer px-6 items-center rounded-t-lg flex justify-between bg-green-400 text-white py-4 md:w-1/2 mx-auto bottom-0 sticky"
     >
       <div className="text-lg text-semibold">
-        {getTotalItems()} Items | ₹ {cartprice}
+        {cartItems.reduce((total, item) => total + item.quantity, 0)} Items | ₹{" "}
+        {cartPrice}
       </div>
       <div className="flex font-semibold text-xl gap-4">
         View Cart{" "}

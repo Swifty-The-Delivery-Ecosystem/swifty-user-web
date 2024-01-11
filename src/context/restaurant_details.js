@@ -15,6 +15,7 @@ export const RestaurantProvider = ({ children }) => {
   const fetchRestaurantDetails = async () => {
     try {
       if (cartItems) {
+        // console.log(cartItems[0]);
         const rid = String(cartItems[0]["restaurant_id"]);
 
         const response = await axios.get(

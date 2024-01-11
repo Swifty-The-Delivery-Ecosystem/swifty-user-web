@@ -5,7 +5,30 @@ import { useCart } from "../context/cartcontext";
 import { useRestaurant } from "../context/restaurant_details";
 import { ShimmerSimpleGallery } from "react-shimmer-effects";
 
-async function displayRazorpay() {
+async function displayRazorpay(cartprice) {
+  let userData = null;
+
+  const fetchCurrentUser = (token) => {
+    fetch("https://auth-six-pi.vercel.app/api/userAuth/currentUser", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Current User:", data.data.user);
+        userData = data.data.user;
+      })
+      .catch((error) => console.error("Error fetching current user:", error));
+  };
+
+  const token = localStorage.getItem("token");
+  console.log(token);
+
+  fetchCurrentUser(token);
+
   const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
 
   if (!res) {
@@ -14,11 +37,29 @@ async function displayRazorpay() {
   }
 
   // creating a new order
-  const amount = 2;
-  const result = await axios.post(
-    "http://localhost:5000/payment/orders",
-    amount
-  );
+  let data = JSON.stringify({
+    amount: cartprice,
+  });
+
+  let config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: "http://127.0.0.1:8000/payment",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: data,
+  };
+  let result;
+  await axios.request(config).then((response) => {
+    result = response;
+    console.log(JSON.stringify(response.data));
+  });
+
+  // const result = await axios.post("http://127.0.0.1:8000/payment", JSON.stringify({
+  //   "amount": 1
+  // }));
+  console.log(result);
 
   if (!result) {
     alert("Server error. Are you online?");
@@ -26,42 +67,55 @@ async function displayRazorpay() {
   }
 
   // Getting the order details back
-  // const { amount, id: order_id, currency } = result.data;
-  const order_id = "659edc5b5f426ca38d635b7e";
-  const currency = "INR";
+  const { amount, id: order_id, currency } = result.data;
+  console.log(result.data);
 
   const options = {
-    key: "rzp_test_r6FiJfddJh76SI", // Enter the Key ID generated from the Dashboard
+    key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
     amount: amount.toString(),
     currency: currency,
-    name: "Soumya Corp.",
+    name: "Swifty.",
     description: "Test Transaction",
     order_id: order_id,
+    // callback_url:"http://localhost:3000/",
+    // redirect: true,
     handler: async function (response) {
+      console.log(response);
       const data = {
         orderCreationId: order_id,
         razorpayPaymentId: response.razorpay_payment_id,
         razorpayOrderId: response.razorpay_order_id,
         razorpaySignature: response.razorpay_signature,
       };
+      console.log(data);
 
       const result = await axios.post(
-        "http://localhost:5000/payment/success",
+        "http://localhost:8000/payment/success",
         data
       );
 
-      alert(result.data.msg);
+      let redirect_url;
+
+      if (
+        typeof response.razorpay_payment_id == "undefined" ||
+        response.razorpay_payment_id < 1
+      ) {
+        redirect_url = "/";
+      } else {
+        redirect_url = "/";
+      }
+      window.location.href = redirect_url;
     },
     prefill: {
-      name: "Soumya Dey",
-      email: "SoumyaDey@example.com",
-      contact: "9999999999",
+      name: "Aditya Dubey",
+      email: "adityavinay@iitbhilai.ac.in",
+      contact: "9892728762",
     },
     notes: {
-      address: "Soumya Dey Corporate Office",
+      address: "IIT Bhilai",
     },
     theme: {
-      color: "#61dafb",
+      color: "#ba68c8",
     },
   };
 
@@ -107,7 +161,7 @@ function Checkout() {
       fetchItemDetails();
     }
   }, [cartItems]);
-
+  const { cartprice } = useCart();
   return cartItems.length > 0 ? (
     <div className="mx-auto bg-white py-6 md:w-1/2 shadow-lg my-4">
       {details ? (
@@ -191,7 +245,9 @@ function Checkout() {
       </div>
       <div
         className="text-center bg-green-500 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600"
-        onClick={displayRazorpay}
+        onClick={() =>
+          displayRazorpay((cartPrice + cartPrice * 0.05 + 5).toFixed(2) * 100)
+        }
       >
         CheckOut
       </div>

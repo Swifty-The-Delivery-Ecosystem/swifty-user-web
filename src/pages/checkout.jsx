@@ -5,7 +5,31 @@ import { useCart } from "../context/cartcontext";
 import { useRestaurant } from "../context/restaurant_details";
 import { ShimmerSimpleGallery } from "react-shimmer-effects";
 
+
 async function displayRazorpay() {
+  let userData = null;
+
+  const fetchCurrentUser = (token) => {
+    fetch("https://auth-six-pi.vercel.app/api/userAuth/currentUser", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Current User:", data.data.user);
+        userData = data.data.user;
+      })
+      .catch((error) => console.error("Error fetching current user:", error));
+  };
+  
+  const token = localStorage.getItem("token");
+  console.log(token);
+
+  fetchCurrentUser(token)
+
   const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
 
   if (!res) {
@@ -14,7 +38,31 @@ async function displayRazorpay() {
   }
 
   // creating a new order
-  const result = await axios.post("http://localhost:5000/payment/orders");
+  let data = JSON.stringify({
+    "amount": 5000
+  });
+  
+  
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'http://127.0.0.1:8000/payment',
+    headers: { 
+      'Content-Type': 'application/json'
+    },
+    data : data
+  };
+  let result ;
+  await axios.request(config)
+.then((response) => {
+  result = response;
+  console.log(JSON.stringify(response.data));
+})
+
+  // const result = await axios.post("http://127.0.0.1:8000/payment", JSON.stringify({
+  //   "amount": 1
+  // }));
+  console.log(result);
 
   if (!result) {
     alert("Server error. Are you online?");
@@ -23,9 +71,10 @@ async function displayRazorpay() {
 
   // Getting the order details back
   const { amount, id: order_id, currency } = result.data;
+  console.log(result.data);
 
   const options = {
-    key: "rzp_test_r6FiJfddJh76SI", // Enter the Key ID generated from the Dashboard
+    key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
     amount: amount.toString(),
     currency: currency,
     name: "Soumya Corp.",
@@ -40,22 +89,22 @@ async function displayRazorpay() {
       };
 
       const result = await axios.post(
-        "http://localhost:5000/payment/success",
+        "http://localhost:8000/payment/success",
         data
       );
 
       alert(result.data.msg);
     },
     prefill: {
-      name: "Soumya Dey",
-      email: "SoumyaDey@example.com",
-      contact: "9999999999",
+      name: userData? userData.name : "Tushar Bansal",
+      email: userData? userData.email : "tusharbansal@iitbhilai.ac.in",
+      contact: userData ? userData.phone.toString() : "7048905680",
     },
     notes: {
-      address: "Soumya Dey Corporate Office",
+      address: "IIT Bhilai",
     },
     theme: {
-      color: "#61dafb",
+      color: "#ba68c8",
     },
   };
 

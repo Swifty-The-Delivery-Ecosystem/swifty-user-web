@@ -38,7 +38,6 @@ const Navbar = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Current User:", data.data.user);
         setUserData(data.data.user);
       })
       .catch((error) => console.error("Error fetching current user:", error));

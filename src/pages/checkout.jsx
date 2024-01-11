@@ -14,7 +14,11 @@ async function displayRazorpay() {
   }
 
   // creating a new order
-  const result = await axios.post("http://localhost:5000/payment/orders");
+  const amount = 2;
+  const result = await axios.post(
+    "http://localhost:5000/payment/orders",
+    amount
+  );
 
   if (!result) {
     alert("Server error. Are you online?");
@@ -22,7 +26,9 @@ async function displayRazorpay() {
   }
 
   // Getting the order details back
-  const { amount, id: order_id, currency } = result.data;
+  // const { amount, id: order_id, currency } = result.data;
+  const order_id = "659edc5b5f426ca38d635b7e";
+  const currency = "INR";
 
   const options = {
     key: "rzp_test_r6FiJfddJh76SI", // Enter the Key ID generated from the Dashboard
@@ -81,7 +87,7 @@ function Checkout() {
   const { cartItems, cartPrice, increaseQuantity, decreaseQuantity } =
     useCart();
   const { details } = useRestaurant();
-  console.log("mkc", details);
+
   const [itemDetails, setItemDetails] = useState([]);
 
   useEffect(() => {
@@ -93,7 +99,6 @@ function Checkout() {
             `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/getitem?cartItems=${cartItemsString}`
           );
           setItemDetails(response.data["finalitems"]);
-          console.log("bkc", response.data["finalitems"][0]);
         } catch (error) {
           console.error("Error fetching item details:", error);
         }

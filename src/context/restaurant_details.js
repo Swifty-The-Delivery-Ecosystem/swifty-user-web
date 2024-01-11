@@ -16,14 +16,12 @@ export const RestaurantProvider = ({ children }) => {
     try {
       if (cartItems) {
         const rid = String(cartItems[0]["restaurant_id"]);
-        console.log("ohhhhh", rid);
 
         const response = await axios.get(
           `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/getdetails?restaurant_id=${rid}`
         );
 
         setdetails(response.data);
-        console.log("bkl", response.data);
       }
     } catch (error) {
       console.error("Error fetching total cart price:", error);

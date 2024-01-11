@@ -77,18 +77,6 @@ const MenuItem = ({ item }) => {
       }
     }
   }, [item, cartItems]);
-  // const addToCart = () => {
-  //   console.log(rid);
-  //   setQuantity(quantity + 1);
-  //   onAddToCart({ ...item, restaurant_id: item.restaurant_id });
-  // };
-
-  // const removeFromCart = () => {
-  //   if (quantity > 0) {
-  //     setQuantity(quantity - 1);
-  //     onRemoveFromCart(item.item_id);
-  //   }
-  // };
 
   return (
     <Card className="my-5 mx-10 shadow-none">

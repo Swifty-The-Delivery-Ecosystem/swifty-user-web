@@ -30,7 +30,7 @@ function Verify() {
     const headers = {
       "Content-Type": "application/json",
     };
-    const url = "https://auth-six-pi.vercel.app/api/userAuth/verify";
+    const url = "https://auth-swifty.vercel.app/api/userAuth/verify";
     const data = {
       email: String(email),
       in_otp: Number(otp),

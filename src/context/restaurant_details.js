@@ -19,7 +19,7 @@ export const RestaurantProvider = ({ children }) => {
         const rid = String(cartItems[0]["restaurant_id"]);
 
         const response = await axios.get(
-          `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/getdetails?restaurant_id=${rid}`
+          `https://inventory-service-tau.vercel.app/api/customer/getdetails?restaurant_id=${rid}`
         );
 
         setdetails(response.data);

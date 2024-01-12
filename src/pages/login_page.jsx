@@ -31,7 +31,7 @@ function Login() {
     const headers = {
       "Content-Type": "application/json",
     };
-    const url = "https://auth-six-pi.vercel.app/api/userAuth/login";
+    const url = "https://auth-swifty.vercel.app/api/userAuth/login";
     const data = {
       email: email,
       password: password,
@@ -67,8 +67,8 @@ function Login() {
         <div className="md:mx-16 mx-2 md:mt-8 mt-4">
           <div className="bg-white pb-8 md:mx-16 mx-2 rounded-xl">
             <div className="pt-4 px-4">
-              <span className="text-2xl text-orange-500 font-bold">Swifty</span>
-              <span className="text-2xl text-blue-600 font-bold">
+              <span className="text-2xl text-purple-500 font-bold">Swifty</span>
+              <span className="text-2xl text-purple-600 font-bold">
                 {" "}
                 Ecosystem
               </span>
@@ -114,15 +114,9 @@ function Login() {
                 />
               </div>
             </div>
+
             <div className="my-1 text-center font-light">or</div>
-            <div className="border-2 cursor-pointer flex justify-center hover:bg-gray-50 rounded-lg mb-2 mx-4 text-center py-2 px-auto">
-              <FcGoogle size={20} />{" "}
-              <div className="ml-2">Sign in with Google</div>
-            </div>
-            <div className="border-2 flex justify-center cursor-pointer hover:bg-gray-50 rounded-lg mb-4 mx-4 text-center py-2 px-auto">
-              <FaTwitter size={20} />{" "}
-              <div className="ml-2">Sign in with Twitter</div>
-            </div>
+
             <div class="flex items-center mx-4 justify-between">
               <div class="flex items-start">
                 <div class="flex items-center h-5">

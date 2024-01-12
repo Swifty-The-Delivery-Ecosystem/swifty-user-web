@@ -16,7 +16,7 @@ const Home = () => {
     const locationParam = 1;
 
     fetch(
-      `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/restaurants?location=1`,
+      `https://inventory-service-tau.vercel.app/api/customer/restaurants?location=1`,
       {
         method: "get",
         headers: {

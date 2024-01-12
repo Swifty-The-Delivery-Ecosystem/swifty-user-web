@@ -6,6 +6,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { SimpleDropdown } from "react-js-dropdavn";
+import "react-js-dropdavn/dist/index.css";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -13,6 +15,14 @@ function SignUp() {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState();
   const [email, setEmail] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState(1); // Set a default value
+
+  const locations = [
+    { label: "BH1", value: 1 },
+    { label: "BH2", value: 2 },
+    { label: "GH1", value: 3 },
+    { label: "GH2", value: 4 },
+  ];
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -37,12 +47,13 @@ function SignUp() {
   }, [navigate]);
 
   const sendLoginRequest = () => {
-    const url = "https://auth-six-pi.vercel.app/api/userAuth/register";
+    const url = "https://auth-swifty.vercel.app/api/userAuth/register";
     const data = {
       name: username,
       email: email,
       password: password,
       phone: phone,
+      primary_location: selectedLocation, 
     };
 
     axios
@@ -153,33 +164,25 @@ function SignUp() {
                 />
               </div>
             </div>
-            <div className="my-1 text-center font-light">or</div>
-            <div className="border-2 cursor-pointer flex justify-center hover:bg-gray-50 rounded-lg mb-2 mx-4 text-center py-2 px-auto">
-              <FcGoogle size={20} />{" "}
-              <div className="ml-2">Sign in with Google</div>
-            </div>
-            <div className="border-2 flex justify-center cursor-pointer hover:bg-gray-50 rounded-lg mb-4 mx-4 text-center py-2 px-auto">
-              <FaTwitter size={20} />{" "}
-              <div className="ml-2">Sign in with Twitter</div>
-            </div>
-            <div class="flex items-center mx-4 justify-between">
-              <div class="flex items-start">
-                <div class="flex items-center h-5">
-                  <input
-                    id="remember"
-                    aria-describedby="remember"
-                    type="checkbox"
-                    class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300"
-                    required=""
-                  />
-                </div>
-                <div class="ml-1 text-sm">
-                  <div for="remember" class="text-gray-500">
-                    Remember me
-                  </div>
-                </div>
+            <div>
+              <div class="mx-4 my-2 text-sm font-medium text-gray-900">
+                Primary Location
+              </div>
+              <div className="w-full">
+                <SimpleDropdown
+                  options={locations}
+                  searchable
+                  defaultValue={1}
+                  onChange={(value) => setSelectedLocation(value)}
+                  configs={{
+                    position: { y: "bottom", x: "center" },
+                    fullWidthParent: true,
+                  }}
+                  className="w-full mx-4"
+                />
               </div>
             </div>
+
             <div
               onClick={sendLoginRequest}
               className="text-white cursor-pointer bg-blue-600 hover:bg-blue-700 mt-4 rounded-lg mx-4 text-center py-2 px-auto"

@@ -94,17 +94,8 @@ const MenuItem = ({ item }) => {
         </div>
         <Card className="flex  justify-between items-center bg-white  rounded-md p-2">
           <div className="flex items-center border-purple-500">
-            <button
-              onClick={() => {
-                increaseQuantity(item);
-              }}
-              className=" text-purple-500 font-bold px-2"
-            >
-              {quantity === 0 ? "Add to Cart" : `+`}
-            </button>
             {quantity > 0 && (
               <>
-                <div className="px-2 text-purple-500 font-bold">{quantity}</div>
                 <button
                   onClick={() => {
                     decreaseQuantity(item);
@@ -113,8 +104,17 @@ const MenuItem = ({ item }) => {
                 >
                   -
                 </button>
+                <div className="px-2 text-purple-500 font-bold">{quantity}</div>
               </>
             )}
+            <button
+              onClick={() => {
+                increaseQuantity(item);
+              }}
+              className=" text-purple-500 font-bold px-2"
+            >
+              {quantity === 0 ? "Add to Cart" : `+`}
+            </button>
           </div>
         </Card>
       </div>

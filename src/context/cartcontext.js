@@ -31,21 +31,46 @@ export const CartProvider = ({ children }) => {
     const existingItem = cartItems.find(
       (cartItem) => cartItem.id === item.item_id
     );
-    if (existingItem) {
-      const updatedCartItems = cartItems.map((cartItem) =>
-        cartItem.id === item.item_id
-          ? { ...cartItem, quantity: cartItem.quantity + 1 }
-          : cartItem
+
+    // Check if there are items in the cart from a different restaurant
+    const isSameRestaurant = cartItems.every(
+      (cartItem) => cartItem.restaurant_id === item.restaurant_id
+    );
+
+    if (!isSameRestaurant) {
+      const userWantsToReplace = window.confirm(
+        "You can only add items from one restaurant at a time. Do you want to replace the current items in the cart?"
       );
-      setCartItems(updatedCartItems);
-      updateLocalStorage(updatedCartItems);
-    } else {
+
+      if (!userWantsToReplace) {
+        return;
+      }
+
+      setCartItems([]);
+      updateLocalStorage([]);
+
       const updatedCartItems = [
-        ...cartItems,
         { id: item.item_id, quantity: 1, restaurant_id: item.restaurant_id },
       ];
       setCartItems(updatedCartItems);
       updateLocalStorage(updatedCartItems);
+    } else {
+      if (existingItem) {
+        const updatedCartItems = cartItems.map((cartItem) =>
+          cartItem.id === item.item_id
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        );
+        setCartItems(updatedCartItems);
+        updateLocalStorage(updatedCartItems);
+      } else {
+        const updatedCartItems = [
+          ...cartItems,
+          { id: item.item_id, quantity: 1, restaurant_id: item.restaurant_id },
+        ];
+        setCartItems(updatedCartItems);
+        updateLocalStorage(updatedCartItems);
+      }
     }
   };
 
@@ -67,7 +92,7 @@ export const CartProvider = ({ children }) => {
       const cartItemsString = JSON.stringify(cartItems);
 
       const response = await axios.get(
-        `https://inventory-service-git-main-swiftyeco.vercel.app/api/customer/cartprice?restaurantID=${cartItems[0]["restaurant_id"]}&cartItems=${cartItemsString}`
+        `https://inventory-service-tau.vercel.app/api/customer/cartprice?restaurantID=${cartItems[0]["restaurant_id"]}&cartItems=${cartItemsString}`
       );
 
       setCartPrice(response.data.totalPrice);

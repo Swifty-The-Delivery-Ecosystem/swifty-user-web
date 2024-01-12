@@ -29,7 +29,7 @@ const Navbar = () => {
   }, []);
 
   const fetchCurrentUser = (token) => {
-    fetch("https://auth-six-pi.vercel.app/api/userAuth/currentUser", {
+    fetch("https://auth-swifty.vercel.app/api/userAuth/currentUser", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -69,7 +69,7 @@ const Navbar = () => {
   const [searchtext, setsearchtext] = useState("");
 
   return (
-    <nav className="flex shadow-lg items-center justify-between h-16 lg:px-[70px] md:h-20 px-5 ">
+    <nav className="flex z-50 bg-white top-0 sticky shadow-lg items-center justify-between h-16 lg:px-[70px] md:h-20 px-5 ">
       <div className="flex gap-6 items-center">
         <NavLink to="/">
           <Logo />
@@ -98,7 +98,7 @@ const Navbar = () => {
             <SimpleDropdown
               options={locations}
               searchable
-              defaultValue={1}
+              defaultValue={userData ? userData.primary_location : 1}
               configs={{ position: { y: "bottom", x: "center" } }}
               className="w-8"
             />

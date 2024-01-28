@@ -22,7 +22,6 @@ function Login() {
     const token = localStorage.getItem("token");
 
     if (token) {
-      // Redirect to home page if token is present
       nav("/");
     }
   }, [nav]);
@@ -31,7 +30,7 @@ function Login() {
     const headers = {
       "Content-Type": "application/json",
     };
-    const url = "https://auth-swifty.vercel.app/api/userAuth/login";
+    const url = "https://auth-six-pi.vercel.app/api/v1/auth/users/login";
     const data = {
       email: email,
       password: password,

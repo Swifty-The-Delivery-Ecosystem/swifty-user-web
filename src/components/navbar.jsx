@@ -7,10 +7,11 @@ import { IoMdClose } from "react-icons/io";
 import { SimpleDropdown } from "react-js-dropdavn";
 import "react-js-dropdavn/dist/index.css";
 import { useCart } from "../context/cartcontext";
+import { useSetlocation } from "../context/locationContext";
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState();
+  const { selectedLocation, setSelectedLocation } = useSetlocation();
   const [userData, setUserData] = useState(null);
   const { cartItems } = useCart();
 
@@ -29,7 +30,7 @@ const Navbar = () => {
   }, []);
 
   const fetchCurrentUser = (token) => {
-    fetch("https://auth-swifty.vercel.app/api/userAuth/currentUser", {
+    fetch("https://auth-six-pi.vercel.app/api/v1/auth/users/currentUser", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -39,6 +40,11 @@ const Navbar = () => {
       .then((response) => response.json())
       .then((data) => {
         setUserData(data.data.user);
+        setSelectedLocation({
+          label: locations[data.data.user.primary_location - 1].label,
+          value: data.data.user.primary_location,
+          index: data.data.user.primary_location - 1,
+        });
       })
       .catch((error) => console.error("Error fetching current user:", error));
   };
@@ -98,9 +104,20 @@ const Navbar = () => {
             <SimpleDropdown
               options={locations}
               searchable
-              defaultValue={userData ? userData.primary_location : 1}
-              configs={{ position: { y: "bottom", x: "center" } }}
-              className="w-8"
+              onChange={(value) => {
+                setSelectedLocation(value);
+              }}
+              labels={{
+                notSelected: `${selectedLocation.label}`,
+                selectedPrefix: `${selectedLocation.label}`,
+                search: "Search area",
+                searchInputPlaceholder: "Search for typing",
+              }}
+              configs={{
+                position: { y: "bottom", x: "center" },
+                fullWidthParent: true,
+              }}
+              className="w-full mx-4"
             />
           </div>
         </div>
@@ -160,10 +177,10 @@ const Navbar = () => {
       </div>
       {/* Desktop Menu */}
       <div className="hidden items-center md:flex space-x-12 menu">
-        {userData ? ( // Check if user data is available
-          <div>
+        {userData ? (
+          <a href="profile/update">
             <div className=" text-lg font-bold">{userData.name}</div>
-          </div>
+          </a>
         ) : (
           <div>
             <NavLink

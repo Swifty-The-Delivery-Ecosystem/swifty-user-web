@@ -21,16 +21,14 @@ function Verify() {
     const token = localStorage.getItem("token");
 
     if (token) {
-      // Redirect to home page if token is present
       nav("/");
     }
   }, [nav]);
   const sendLoginRequest = () => {
-    console.log(email);
     const headers = {
       "Content-Type": "application/json",
     };
-    const url = "https://auth-swifty.vercel.app/api/userAuth/verify";
+    const url = "https://auth-six-pi.vercel.app/api/v1/auth/users/verify";
     const data = {
       email: String(email),
       in_otp: Number(otp),
@@ -39,25 +37,20 @@ function Verify() {
     axios
       .post(url, data, { headers })
       .then((response) => {
-        // Check if the response type is success
         if (response.data && response.data.type === "success") {
-          // Set token in local storage
+          
           localStorage.setItem("token", response.data.data.token);
           nav("/");
-
-          // Show success toast
           toast.success(response.data.message, {
             position: toast.POSITION.TOP_CENTER,
           });
         } else {
-          // Show error toast for unexpected response
           toast.error("Unexpected response format", {
             position: toast.POSITION.TOP_CENTER,
           });
         }
       })
       .catch((error) => {
-        // Show error toast for network or server errors
         toast.error(error.message, {
           position: toast.POSITION.TOP_CENTER,
         });

@@ -11,11 +11,37 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [cartPrice, setCartPrice] = useState(0);
   const [cartItemsCount, setCartItemsCount] = useState(0);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(storedCart);
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return;
+    }
+
+    fetchCurrentUser(token);
+  }, []);
+
+  const fetchCurrentUser = (token) => {
+    fetch("https://auth-six-pi.vercel.app/api/v1/auth/users/currentUser", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setUserData(data.data.user);
+      })
+      .catch((error) => console.error("Error fetching current user:", error));
+  };
 
   useEffect(() => {
     if (cartItems) {
@@ -34,7 +60,7 @@ export const CartProvider = ({ children }) => {
 
     // Check if there are items in the cart from a different restaurant
     const isSameRestaurant = cartItems.every(
-      (cartItem) => cartItem.restaurant_id === item.restaurant_id
+      (cartItem) => cartItem.restaurant_id === item.vendor_id
     );
 
     if (!isSameRestaurant) {
@@ -50,7 +76,12 @@ export const CartProvider = ({ children }) => {
       updateLocalStorage([]);
 
       const updatedCartItems = [
-        { id: item.item_id, quantity: 1, restaurant_id: item.restaurant_id },
+        {
+          id: item.item_id,
+          quantity: 1,
+          restaurant_id: item.vendor_id,
+          name: item.name,
+        },
       ];
       setCartItems(updatedCartItems);
       updateLocalStorage(updatedCartItems);
@@ -66,7 +97,12 @@ export const CartProvider = ({ children }) => {
       } else {
         const updatedCartItems = [
           ...cartItems,
-          { id: item.item_id, quantity: 1, restaurant_id: item.restaurant_id },
+          {
+            id: item.item_id,
+            quantity: 1,
+            restaurant_id: item.vendor_id,
+            name: item.name,
+          },
         ];
         setCartItems(updatedCartItems);
         updateLocalStorage(updatedCartItems);
@@ -75,16 +111,22 @@ export const CartProvider = ({ children }) => {
   };
 
   const decreaseQuantity = (item) => {
-    const updatedCartItems = cartItems
-      .map((cartItem) =>
-        cartItem.id === item.item_id
-          ? { ...cartItem, quantity: Math.max(cartItem.quantity - 1, 0) }
-          : cartItem
-      )
-      .filter((cartItem) => cartItem.quantity > 0);
+    const existingItem = cartItems.find(
+      (cartItem) => cartItem.id === item.item_id
+    );
 
-    setCartItems(updatedCartItems);
-    updateLocalStorage(updatedCartItems);
+    if (existingItem) {
+      const updatedCartItems = cartItems
+        .map((cartItem) =>
+          cartItem.id === item.item_id
+            ? { ...cartItem, quantity: Math.max(cartItem.quantity - 1, 0) }
+            : cartItem
+        )
+        .filter((cartItem) => cartItem.quantity > 0);
+
+      setCartItems(updatedCartItems);
+      updateLocalStorage(updatedCartItems);
+    }
   };
 
   const fetchTotalCartPrice = async () => {
@@ -92,9 +134,8 @@ export const CartProvider = ({ children }) => {
       const cartItemsString = JSON.stringify(cartItems);
 
       const response = await axios.get(
-        `https://inventory-service-tau.vercel.app/api/customer/cartprice?restaurantID=${cartItems[0]["restaurant_id"]}&cartItems=${cartItemsString}`
+        `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/cartprice?vendor_id=${cartItems[0]["restaurant_id"]}&cartItems=${cartItemsString}`
       );
-
       setCartPrice(response.data.totalPrice);
     } catch (error) {
       console.error("Error fetching total cart price:", error);
@@ -115,6 +156,7 @@ export const CartProvider = ({ children }) => {
     cartItems,
     cartPrice,
     cartItemsCount,
+    userData,
     increaseQuantity,
     decreaseQuantity,
   };

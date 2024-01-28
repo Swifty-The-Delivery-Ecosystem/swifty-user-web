@@ -4,145 +4,192 @@ import axios from "axios";
 import { useCart } from "../context/cartcontext";
 import { useRestaurant } from "../context/restaurant_details";
 import { ShimmerSimpleGallery } from "react-shimmer-effects";
+import Modal from "react-modal";
+import { v4 as uuidv4 } from "uuid";
 
-async function displayRazorpay(cartprice) {
-  let userData = null;
-
-  const fetchCurrentUser = (token) => {
-    fetch("https://auth-six-pi.vercel.app/api/userAuth/currentUser", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Current User:", data.data.user);
-        userData = data.data.user;
-      })
-      .catch((error) => console.error("Error fetching current user:", error));
-  };
-
-  const token = localStorage.getItem("token");
-  console.log(token);
-
-  fetchCurrentUser(token);
-
-  const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-
-  if (!res) {
-    alert("Razorpay SDK failed to load. Are you online?");
-    return;
-  }
-
-  // creating a new order
-  let data = JSON.stringify({
-    amount: cartprice,
-  });
-
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "http://127.0.0.1:8000/payment",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-  let result;
-  await axios.request(config).then((response) => {
-    result = response;
-    console.log(JSON.stringify(response.data));
-  });
-
-  // const result = await axios.post("http://127.0.0.1:8000/payment", JSON.stringify({
-  //   "amount": 1
-  // }));
-  console.log(result);
-
-  if (!result) {
-    alert("Server error. Are you online?");
-    return;
-  }
-
-  // Getting the order details back
-  const { amount, id: order_id, currency } = result.data;
-  console.log(result.data);
-
-  const options = {
-    key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
-    amount: amount.toString(),
-    currency: currency,
-    name: "Swifty.",
-    description: "Test Transaction",
-    order_id: order_id,
-    // callback_url:"http://localhost:3000/",
-    // redirect: true,
-    handler: async function (response) {
-      console.log(response);
-      const data = {
-        orderCreationId: order_id,
-        razorpayPaymentId: response.razorpay_payment_id,
-        razorpayOrderId: response.razorpay_order_id,
-        razorpaySignature: response.razorpay_signature,
-      };
-      console.log(data);
-
-      const result = await axios.post(
-        "http://localhost:8000/payment/success",
-        data
-      );
-
-      let redirect_url;
-
-      if (
-        typeof response.razorpay_payment_id == "undefined" ||
-        response.razorpay_payment_id < 1
-      ) {
-        redirect_url = "/";
-      } else {
-        redirect_url = "/";
-      }
-      window.location.href = redirect_url;
-    },
-    prefill: {
-      name: "Aditya Dubey",
-      email: "adityavinay@iitbhilai.ac.in",
-      contact: "9892728762",
-    },
-    notes: {
-      address: "IIT Bhilai",
-    },
-    theme: {
-      color: "#ba68c8",
-    },
-  };
-
-  const paymentObject = new window.Razorpay(options);
-  paymentObject.open();
-}
-
-function loadScript(src) {
-  return new Promise((resolve) => {
-    const script = document.createElement("script");
-    script.src = src;
-    script.onload = () => {
-      resolve(true);
-    };
-    script.onerror = () => {
-      resolve(false);
-    };
-    document.body.appendChild(script);
-  });
-}
+let amount;
 
 function Checkout() {
-  const { cartItems, cartPrice, increaseQuantity, decreaseQuantity } =
+  const { cartItems, cartPrice, userData, increaseQuantity, decreaseQuantity } =
     useCart();
   const { details } = useRestaurant();
-
   const [itemDetails, setItemDetails] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const orderId = uuidv4();
+
+  async function createOrder({
+    vendor_id,
+    user_id,
+    amount,
+    cartItems,
+    payment_method,
+  }) {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.post(
+        "http://localhost:8002/api/v1/order_service/user",
+        {
+          user_id: user_id,
+          items: cartItems,
+          amount: amount,
+          vendor_id: vendor_id,
+          order_instructions: "Please Send Cutlery",
+          payment_method: payment_method,
+          order_id: orderId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        const result = response.data;
+        if (payment_method === "cod") {
+          localStorage.removeItem("cart");
+          window.location.href = `http://localhost:3000/track?order_id=${orderId}`;
+        }
+        displayRazorpay(amount);
+      } else {
+        console.error("Error creating order:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error creating order:", error);
+    }
+  }
+
+  async function displayRazorpay(totalAmount) {
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    let data = JSON.stringify({
+      amount: totalAmount * 100,
+    });
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://payment-gateway-mocha.vercel.app/payment",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    let result;
+    await axios.request(config).then((response) => {
+      result = response;
+    });
+
+    if (!result) {
+      alert("Server error. Are you online?");
+      return;
+    }
+
+    const { amount, id: order_id, currency } = result.data;
+
+    const options = {
+      key: process.env.RAZORPAY_KEY_ID,
+      amount: (amount * 100).toString(),
+      currency: currency,
+      name: "Swifty.",
+      description: "Test Transaction",
+      order_id: order_id,
+      handler: async function (response) {
+        const data = {
+          orderCreationId: order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpayOrderId: response.razorpay_order_id,
+          razorpaySignature: response.razorpay_signature,
+        };
+
+        const result = await axios.post(
+          "https://payment-gateway-mocha.vercel.app/payment/success",
+          data
+        );
+
+        let redirect_url;
+
+        if (
+          typeof response.razorpay_payment_id == "undefined" ||
+          response.razorpay_payment_id < 1
+        ) {
+          redirect_url = "/cart";
+        } else {
+          redirect_url = `/track?order_id=${orderId}`;
+        }
+        localStorage.removeItem("cart");
+        window.location.href = redirect_url;
+      },
+      prefill: {
+        name: "Aditya Dubey",
+        email: "adityavinay@iitbhilai.ac.in",
+        contact: "9892728762",
+      },
+      notes: {
+        address: "IIT Bhilai",
+      },
+      theme: {
+        color: "#ba68c8",
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  }
+
+  function loadScript(src) {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  amount = (cartPrice + cartPrice * 0.05 + 5).toFixed(2);
+
+  const handleCheckout = async () => {
+    setModalIsOpen(true);
+  };
+
+  const handlePayment = async (method) => {
+    setPaymentMethod(method);
+    setModalIsOpen(false);
+
+    if (method === "online") {
+      createOrder({
+        vendor_id: details._id,
+        user_id: userData._id,
+        amount: amount,
+        cartItems: cartItems,
+        payment_method: "online",
+      });
+    } else {
+      // Handle COD logic here
+      createOrder({
+        vendor_id: details._id,
+        user_id: userData._id,
+        amount: amount,
+        cartItems: cartItems,
+        payment_method: "cod",
+      });
+    }
+  };
 
   useEffect(() => {
     if (cartItems && cartItems.length > 0) {
@@ -167,15 +214,18 @@ function Checkout() {
       {details ? (
         <div className="flex justify-start gap-6 px-8 py-4 items-start">
           <div>
-            <img className="w-80 h-32 md:h-40" src={details.image_url} alt="" />
+            <img
+              className="w-80 object-cover h-32 md:h-40"
+              src={details.image_url}
+              alt=""
+            />
           </div>
           <div className="flex flex-col">
             <div className="mt-6 md:text-xl text-lg font-bold">
               {details.name}
             </div>
             <div className="flex gap-2">
-              <img src={star} alt="" className="w-6 h-6" />{" "}
-              {details.rating.$numberDecimal.toString()}
+              <img src={star} alt="" className="w-6 h-6" /> {details.rating}
             </div>
             <div className="md:text-lg text-sm font-medium">
               {details.description}
@@ -192,7 +242,7 @@ function Checkout() {
             <div className="flex items-center gap-2">
               <img
                 src={
-                  item.type === 2
+                  item.is_veg
                     ? "https://i.pngimg.me/thumb/f/720/m2i8b1A0m2m2Z5Z5.jpg"
                     : "https://spng.pinpng.com/pngs/s/45-459786_non-veg-icon-circle-hd-png-download.png"
                 }
@@ -243,14 +293,43 @@ function Checkout() {
           ₹ {(cartPrice + cartPrice * 0.05 + 5).toFixed(2)}
         </div>
       </div>
-      <div
-        className="text-center bg-green-500 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600"
-        onClick={() =>
-          displayRazorpay((cartPrice + cartPrice * 0.05 + 5).toFixed(2) * 100)
-        }
+      {details && userData && amount && cartItems && (
+        <div>
+          <div
+            className="text-center bg-green-500 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600"
+            onClick={handleCheckout}
+          >
+            CheckOut
+          </div>
+        </div>
+      )}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        contentLabel="Payment Method"
+        className="Modal rounded-md w-2/5 shadow-md p-6 bg-white mx-auto absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        overlayClassName="Overlay fixed inset-0 bg-black bg-opacity-50"
       >
-        CheckOut
-      </div>
+        <div className="text-center">
+          <p className="font-bold text-lg md:text-xl font-roboto">
+            Please select a payment method:
+          </p>
+          <div className="mt-4">
+            <button
+              className="bg-blue-500 md:text-xl text-sm hover:bg-blue-600 px-2 text-white py-2 font-bold md:py-2 md:px-4 rounded md:mr-2"
+              onClick={() => handlePayment("cod")}
+            >
+              Cash on Delivery (COD)
+            </button>
+            <button
+              className="bg-green-500 md:text-xl text-sm my-2 py-2 hover:bg-green-600 text-white font-bold md:py-2 md:px-4 rounded"
+              onClick={() => handlePayment("online")}
+            >
+              Online Payment
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   ) : (
     <div className="mx-auto items-center text-center bg-white py-12 px-4 md:w-1/2 shadow-lg my-4">

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { BrowserRouter as Router } from "react-router-dom";
+import { LocationProvider } from "./context/locationContext";
 import { CartProvider } from "./context/cartcontext";
 import { RestaurantProvider } from "./context/restaurant_details";
 
@@ -11,7 +11,9 @@ root.render(
   <React.StrictMode>
     <CartProvider>
       <RestaurantProvider>
-        <App />
+        <LocationProvider>
+          <App />
+        </LocationProvider>
       </RestaurantProvider>
     </CartProvider>
   </React.StrictMode>

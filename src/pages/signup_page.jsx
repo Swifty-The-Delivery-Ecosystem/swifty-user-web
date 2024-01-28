@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-import { FcGoogle } from "react-icons/fc";
-import { FaTwitter } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -8,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { SimpleDropdown } from "react-js-dropdavn";
 import "react-js-dropdavn/dist/index.css";
+import { useSetlocation } from "../context/locationContext";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ function SignUp() {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState();
   const [email, setEmail] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState(1); // Set a default value
+  const { selectedLocation, setSelectedLocation } = useSetlocation();
 
   const locations = [
     { label: "BH1", value: 1 },
@@ -41,32 +40,29 @@ function SignUp() {
     const token = localStorage.getItem("token");
 
     if (token) {
-      // Redirect to home page if token is present
       navigate("/");
     }
   }, [navigate]);
 
   const sendLoginRequest = () => {
-    const url = "https://auth-swifty.vercel.app/api/userAuth/register";
+    const url = "https://auth-six-pi.vercel.app/api/v1/auth/users/register";
     const data = {
       name: username,
       email: email,
       password: password,
       phone: phone,
-      primary_location: selectedLocation, 
+      primary_location: selectedLocation.value,
     };
 
     axios
       .post(url, data)
       .then((response) => {
-        // Show success toast
         toast.success(response.data.message, {
           position: toast.POSITION.TOP_CENTER,
         });
         navigate("/verify", { state: { email: email } });
       })
       .catch((error) => {
-        // Show error toast
         toast.error(error.message, {
           position: toast.POSITION.TOP_CENTER,
         });
@@ -172,8 +168,15 @@ function SignUp() {
                 <SimpleDropdown
                   options={locations}
                   searchable
-                  defaultValue={1}
-                  onChange={(value) => setSelectedLocation(value)}
+                  onChange={(value) => {
+                    setSelectedLocation(value);
+                  }}
+                  labels={{
+                    notSelected: `${selectedLocation.label}`,
+                    selectedPrefix: `${selectedLocation.label}`, // Set the selected label here
+                    search: "Search area",
+                    searchInputPlaceholder: "Search for typing",
+                  }}
                   configs={{
                     position: { y: "bottom", x: "center" },
                     fullWidthParent: true,

@@ -5,18 +5,50 @@ import "../assets/css/home.css";
 import { motion, useScroll } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ShimmerSimpleGallery } from "react-shimmer-effects";
+import { useSetlocation } from "../context/locationContext";
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [restaurantsTag, setRestaurantsTag] = useState([]);
   const ref = useRef(null);
   const { scrollXProgress } = useScroll({ container: ref });
   const navigate = useNavigate();
+  const { selectedLocation, setSelectedLocation } = useSetlocation();
+
+  const tags = [
+    {
+      name: "Pizza",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1674029856/PC_Creative%20refresh/3D_bau/banners_new/Pizza.png",
+    },
+    {
+      name: "Paratha",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1674029853/PC_Creative%20refresh/3D_bau/banners_new/Paratha.png",
+    },
+    {
+      name: "Biryani",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1675667625/PC_Creative%20refresh/Biryani_2.png",
+    },
+    {
+      name: "Paratha",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1674029853/PC_Creative%20refresh/3D_bau/banners_new/Paratha.png",
+    },
+    {
+      name: "Rolls",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1674029858/PC_Creative%20refresh/3D_bau/banners_new/Rolls.png",
+    },
+    {
+      name: "Chinese",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1674029848/PC_Creative%20refresh/3D_bau/banners_new/Chinese.png",
+    },
+    {
+      name: "Sandwich",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1674029860/PC_Creative%20refresh/3D_bau/banners_new/Sandwich.png",
+    },
+  ];
 
   useEffect(() => {
-    const locationParam = 1;
-
     fetch(
-      `https://inventory-service-tau.vercel.app/api/customer/restaurants?location=1`,
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?location=${selectedLocation.value}`,
       {
         method: "get",
         headers: {
@@ -36,8 +68,27 @@ const Home = () => {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
+  const handleTagClick = (tag) => {
+    fetch(
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?location=${selectedLocation.value}&tag=${tag}`,
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        navigate(`/restaurants/${tag}`, {
+          state: { vendors: data, tag: tag },
+        });
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+
   return (
-    <div className="mb-4">
+    <div className="mb-4 md:mx-16 mx-0">
       <div>
         <div className="bg-gradient-to-r from-purple-300 to-purple-500 px-4 md:rounded-bl-[24rem] md:rounded-tr-[4rem] py-4 bg-opacity-50 flex justify-between">
           <div className="align-middle md:ml-12 md:pl-12 my-auto items-center">
@@ -56,7 +107,9 @@ const Home = () => {
             />
           </div>
         </div>
-
+        <div className="md:text-3xl text-xl mx-8 my-6 font-extrabold font-roboto">
+          Restaurants near you
+        </div>
         <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
           {restaurants.length !== 0 ? (
             restaurants.map((restaurant, index) => (
@@ -75,15 +128,38 @@ const Home = () => {
                   className=" w-3/4 rounded-xl mb-2 "
                 />
                 <div className="text-left">
-                  <div className="text-lg font-bold">{restaurant.name}</div>
+                  <div className="md:text-xl text-lg font-bold">
+                    {restaurant.name}
+                  </div>
                   <div className="text-[16px] flex gap-2 items-center text-gray-500">
                     <img src={star} alt="" className="w-6 h-6" />{" "}
-                    {restaurant.rating.$numberDecimal.toString()}
+                    {restaurant.rating}
                   </div>
                   <div className="text-[14px] text-gray-600 font-medium mb-1">
                     {restaurant.description}
                   </div>
                 </div>
+              </li>
+            ))
+          ) : (
+            <ShimmerSimpleGallery card imageHeight={200} caption />
+          )}
+        </ul>
+
+        <div className="md:text-3xl text-xl mx-8 my-6 font-extrabold font-roboto">
+          What's on your mind?
+        </div>
+        <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
+          {restaurants.length !== 0 ? (
+            tags.map((tag, index) => (
+              <li
+                onClick={() => {
+                  handleTagClick(tag.name);
+                }}
+                key={index}
+                className="rounded-xl hover:cursor-pointer items-center"
+              >
+                <img src={tag.url} alt={tag.name} />
               </li>
             ))
           ) : (

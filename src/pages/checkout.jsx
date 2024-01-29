@@ -29,7 +29,7 @@ function Checkout() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:8002/api/v1/order_service/user",
+        "https://order-service-peach.vercel.app/api/v1/order_service/user",
         {
           user_id: user_id,
           items: cartItems,
@@ -42,7 +42,7 @@ function Checkout() {
         {
           headers: {
             "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
           },
         }
       );

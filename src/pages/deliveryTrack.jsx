@@ -12,7 +12,7 @@ const DeliveryTrack = () => {
 
   useEffect(() => {
     fetch(
-      `http://localhost:8002/api/v1/order_service/order?order_id=${order_id}`,
+      `https://order-service-peach.vercel.app/api/v1/order_service/order?order_id=${order_id}`,
       {
         method: "get",
         headers: {

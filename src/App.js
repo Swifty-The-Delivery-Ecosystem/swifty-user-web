@@ -9,6 +9,8 @@ import Checkout from "./pages/checkout";
 import Verify from "./pages/verify_otp";
 import RestaurantTagScreen from "./pages/restaurantTagScreen";
 import DeliveryTrack from "./pages/deliveryTrack";
+import OrderHistory from "./pages/OrderHistory";
+import UpdateProfile from "./pages/updateProfile";
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         <Route path="/cart" element={<Checkout />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/track" element={<DeliveryTrack />} />
+        <Route path="/orders" element={<OrderHistory />} />
+        <Route path="/update" element={<UpdateProfile />} />
       </Routes>
     </BrowserRouter>
   );

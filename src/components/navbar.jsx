@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "./Logo";
 import { BsFillCartFill } from "react-icons/bs";
@@ -8,45 +8,35 @@ import { SimpleDropdown } from "react-js-dropdavn";
 import "react-js-dropdavn/dist/index.css";
 import { useCart } from "../context/cartcontext";
 import { useSetlocation } from "../context/locationContext";
+import { useProfile } from "../context/userContext";
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const { selectedLocation, setSelectedLocation } = useSetlocation();
-  const [userData, setUserData] = useState(null);
   const { cartItems } = useCart();
+  const { userData } = useProfile();
+  const dropdownRef = useRef(null);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuOpen(!isMenuOpen);
+  const toggleDropdown = () => {
+    setDropdownVisible(!isDropdownVisible);
+  };
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropdownVisible(false);
+    }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    document.addEventListener("click", handleClickOutside);
 
-    if (!token) {
-      return;
-    }
-
-    fetchCurrentUser(token);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, []);
 
-  const fetchCurrentUser = (token) => {
-    fetch("https://auth-six-pi.vercel.app/api/v1/auth/users/currentUser", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setUserData(data.data.user);
-        setSelectedLocation({
-          label: locations[data.data.user.primary_location - 1].label,
-          value: data.data.user.primary_location,
-          index: data.data.user.primary_location - 1,
-        });
-      })
-      .catch((error) => console.error("Error fetching current user:", error));
+  const toggleMenu = () => {
+    setMenuOpen(!isMenuOpen);
   };
 
   const handleLocationSelect = (location) => {
@@ -54,11 +44,11 @@ const Navbar = () => {
   };
   const navmenu = [
     {
-      link: "/about",
-      name: "About",
+      link: "/update",
+      name: "Update Profile",
     },
     {
-      link: "/contact",
+      link: "/orders",
       name: "Contact",
     },
     {
@@ -175,12 +165,29 @@ const Navbar = () => {
           </div>
         )}
       </div>
-      {/* Desktop Menu */}
       <div className="hidden items-center md:flex space-x-12 menu">
         {userData ? (
-          <a href="profile/update">
-            <div className=" text-lg font-bold">{userData.name}</div>
-          </a>
+          <div className="relative" ref={dropdownRef}>
+            <div
+              onClick={toggleDropdown}
+              className="text-lg font-bold cursor-pointer"
+            >
+              {userData.name}
+            </div>
+            {isDropdownVisible && (
+              <div className="absolute top-12 z-50 right-0 bg-white shadow-md px-8 rounded-xl py-4 space-y-2">
+                <NavLink to="/update" className="text-gray-700 font-bold block">
+                  Update Profile
+                </NavLink>
+                <NavLink to="/orders" className="text-gray-700 block font-bold">
+                  My Orders
+                </NavLink>
+                <NavLink to="/logout" className="text-red-500 block font-bold">
+                  Logout
+                </NavLink>
+              </div>
+            )}
+          </div>
         ) : (
           <div>
             <NavLink

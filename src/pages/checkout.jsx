@@ -6,6 +6,7 @@ import { useRestaurant } from "../context/restaurant_details";
 import { ShimmerSimpleGallery } from "react-shimmer-effects";
 import Modal from "react-modal";
 import { v4 as uuidv4 } from "uuid";
+import { useSetlocation } from "../context/locationContext";
 
 let amount;
 
@@ -24,6 +25,7 @@ function Checkout() {
     amount,
     cartItems,
     payment_method,
+    user_location,
   }) {
     try {
       const token = localStorage.getItem("token");
@@ -38,11 +40,12 @@ function Checkout() {
           order_instructions: "Please Send Cutlery",
           payment_method: payment_method,
           order_id: orderId,
+          user_location: user_location,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -160,6 +163,7 @@ function Checkout() {
       document.body.appendChild(script);
     });
   }
+  const { selectedLocation } = useSetlocation();
 
   amount = (cartPrice + cartPrice * 0.05 + 5).toFixed(2);
 
@@ -178,15 +182,16 @@ function Checkout() {
         amount: amount,
         cartItems: cartItems,
         payment_method: "online",
+        user_location: selectedLocation.value,
       });
     } else {
-      // Handle COD logic here
       createOrder({
         vendor_id: details._id,
         user_id: userData._id,
         amount: amount,
         cartItems: cartItems,
         payment_method: "cod",
+        user_location: selectedLocation.value,
       });
     }
   };
@@ -209,6 +214,7 @@ function Checkout() {
     }
   }, [cartItems]);
   const { cartprice } = useCart();
+
   return cartItems.length > 0 ? (
     <div className="mx-auto bg-white py-6 md:w-1/2 shadow-lg my-4">
       {details ? (
@@ -216,16 +222,16 @@ function Checkout() {
           <div>
             <img
               className="w-80 object-cover h-32 md:h-40"
-              src={details.image_url}
+              src={details.images[0]}
               alt=""
             />
           </div>
           <div className="flex flex-col">
             <div className="mt-6 md:text-xl text-lg font-bold">
-              {details.name}
+              {details.restaurantName}
             </div>
             <div className="flex gap-2">
-              <img src={star} alt="" className="w-6 h-6" /> {details.rating}
+              <img src={star} alt="" className="w-6 h-6" /> {details.ratings}
             </div>
             <div className="md:text-lg text-sm font-medium">
               {details.description}
@@ -293,12 +299,18 @@ function Checkout() {
           ₹ {(cartPrice + cartPrice * 0.05 + 5).toFixed(2)}
         </div>
       </div>
-      {details && userData && amount && cartItems && (
+      {details && userData && amount && cartItems && selectedLocation ? (
         <div>
           <div
             className="text-center bg-green-500 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600"
             onClick={handleCheckout}
           >
+            CheckOut
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div className="text-center bg-green-300 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600">
             CheckOut
           </div>
         </div>

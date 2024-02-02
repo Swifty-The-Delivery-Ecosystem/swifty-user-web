@@ -18,6 +18,7 @@ const DeliveryTrack = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        // mode: "no-cors",
       }
     )
       .then((response) => response.json())
@@ -26,7 +27,7 @@ const DeliveryTrack = () => {
         setcartPrice(data.order.amount);
         setOrderStatus(data.order.order_status);
       });
-  }, []);
+  }, [order_id]);
 
   return (
     <div className="">

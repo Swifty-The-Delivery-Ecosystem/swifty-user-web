@@ -15,15 +15,15 @@ function RestaurantScreen() {
     <div className="md:content-center mx-1 md:mx-auto">
       <div className="flex bg-white mx-auto shadow-lg md:w-1/2 justify-between rounded-xl gap-6 px-8 py-4 items-start">
         <div>
-          <img className="h-40 object-cover" src={restaurant.image_url} alt="" />
+          <img className="h-40 object-cover" src={restaurant.images[0]} alt="" />
         </div>
         <div className="flex flex-col">
           <div className="mt-6 md:text-xl py-2 text-lg font-bold">
-            {restaurant.name}
+            {restaurant.restaurantName}
           </div>
           <div className="flex items-center py-2 gap-2">
-            <img src={star} alt="" className="w-6 h-6" /> {restaurant.rating} |{" "}
-            {restaurant.number_of_ratings}+ ratings
+            <img src={star} alt="" className="w-6 h-6" /> {restaurant.ratings} |{" "}
+            {restaurant.number_of_rating}+ ratings
           </div>
           <div className="md:text-lg text-sm font-medium">
             {restaurant.description}

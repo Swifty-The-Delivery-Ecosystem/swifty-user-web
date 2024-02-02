@@ -110,7 +110,10 @@ const Home = () => {
         <div className="md:text-3xl text-xl mx-8 my-6 font-extrabold font-roboto">
           Restaurants near you
         </div>
-        <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
+        <ul
+          className="mx-8 my-8 flex gap-8 overflow-y-hidden relative"
+          ref={ref}
+        >
           {restaurants.length !== 0 ? (
             restaurants.map((restaurant, index) => (
               <li
@@ -123,20 +126,25 @@ const Home = () => {
                 className="rounded-xl hover:cursor-pointer items-center"
               >
                 <img
-                  src={restaurant.image_url}
-                  alt={restaurant.name}
-                  className=" w-3/4 rounded-xl mb-2 "
+                  src={restaurant.images[0]}
+                  alt={restaurant.restaurantName}
+                  className="w-80 h-40 object-cover rounded-xl mb-2"
                 />
                 <div className="text-left">
                   <div className="md:text-xl text-lg font-bold">
-                    {restaurant.name}
+                    {restaurant.restaurantName}
                   </div>
                   <div className="text-[16px] flex gap-2 items-center text-gray-500">
                     <img src={star} alt="" className="w-6 h-6" />{" "}
-                    {restaurant.rating}
+                    {restaurant.ratings}
                   </div>
                   <div className="text-[14px] text-gray-600 font-medium mb-1">
-                    {restaurant.description}
+                    {restaurant.tags.slice(0, 4).join(" ,")}
+                  </div>
+                  <div className="text-[14px] text-gray-600 font-medium mb-1">
+                    {restaurant.description.length > 28
+                      ? `${restaurant.description.slice(0, 28)}...`
+                      : restaurant.description}
                   </div>
                 </div>
               </li>

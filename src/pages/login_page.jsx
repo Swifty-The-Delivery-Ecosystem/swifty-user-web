@@ -4,8 +4,6 @@ import { FaTwitter } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
   const nav = useNavigate();
@@ -42,11 +40,6 @@ function Login() {
         // Set token in local storage
         localStorage.setItem("token", response.data.data.token);
         nav("/");
-
-        // Show success toast
-        toast.success(response.data.message, {
-          position: toast.POSITION.TOP_CENTER,
-        });
       })
       .catch((error) => {
         console.error(error.message);

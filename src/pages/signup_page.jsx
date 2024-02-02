@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { SimpleDropdown } from "react-js-dropdavn";
 import "react-js-dropdavn/dist/index.css";
@@ -57,15 +55,10 @@ function SignUp() {
     axios
       .post(url, data)
       .then((response) => {
-        toast.success(response.data.message, {
-          position: toast.POSITION.TOP_CENTER,
-        });
         navigate("/verify", { state: { email: email } });
       })
       .catch((error) => {
-        toast.error(error.message, {
-          position: toast.POSITION.TOP_CENTER,
-        });
+        console.log(error)
       });
   };
 

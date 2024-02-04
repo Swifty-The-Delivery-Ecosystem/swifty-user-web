@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import trackimg from "../assets/images/deliverytrack.png";
-import deliveryBoy from "../assets/images/deliveryBoyAvatar.png";
+import deliveryBoyImg from "../assets/images/deliveryBoyAvatar.png";
 
 const DeliveryTrack = () => {
   const [items, setitems] = useState([]);
   const [cartPrice, setcartPrice] = useState(0);
   const [orderStatus, setOrderStatus] = useState("");
+  const [deliveryBoyId, setDeliveryBoyId] = useState("");
+  const [deliveryBoy, setDeliveryBoy] = useState({});
   const search = window.location.search;
   const params = new URLSearchParams(search);
   const order_id = params.get("order_id");
@@ -26,8 +28,27 @@ const DeliveryTrack = () => {
         setitems(data.order.items);
         setcartPrice(data.order.amount);
         setOrderStatus(data.order.order_status);
+        setDeliveryBoyId(data.order.delivery_boy_id);
       });
   }, [order_id]);
+
+  useEffect(() => {
+    fetch(
+      `http://localhost:5000/api/v1/auth/delivery_partner/get_delivery_boy/${deliveryBoyId}`,
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // mode: "no-cors",
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setDeliveryBoy(data.data.user);
+        console.log(data.data.user);
+      });
+  }, [deliveryBoyId]);
 
   return (
     <div className="">
@@ -47,13 +68,18 @@ const DeliveryTrack = () => {
             <div className="text-[1.25rem] font-roboto font-medium">
               Your Delivery Partner
             </div>
-            <div className="text-[1rem] font-extrabold">Rajesh Kumar</div>
+            <div className="text-[1rem] font-extrabold">
+              {deliveryBoy && deliveryBoy.name}
+            </div>
+            <div className="text-[1rem] font-extrabold">
+              {deliveryBoy && deliveryBoy.phone}
+            </div>
             <div className="font-light mt-2 text-gray-800 text-sm">
               <span className="font-bold mr-1">100+</span>5-Star Deliveries
             </div>
           </div>
           <div>
-            <img src={deliveryBoy} alt="" class="w-16 h-16 rounded-full" />
+            <img src={deliveryBoyImg} alt="" class="w-16 h-16 rounded-full" />
           </div>
         </div>
       </div>

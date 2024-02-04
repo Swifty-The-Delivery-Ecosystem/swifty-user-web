@@ -9,6 +9,7 @@ import "react-js-dropdavn/dist/index.css";
 import { useCart } from "../context/cartcontext";
 import { useSetlocation } from "../context/locationContext";
 import { useProfile } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -17,6 +18,7 @@ const Navbar = () => {
   const { userData } = useProfile();
   const dropdownRef = useRef(null);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setDropdownVisible(!isDropdownVisible);
@@ -63,6 +65,10 @@ const Navbar = () => {
     { label: "GH2", value: 4 },
   ];
   const [searchtext, setsearchtext] = useState("");
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove the token from local storage
+    navigate("/login"); // Redirect to the login page after logout
+  };
 
   return (
     <nav className="flex z-50 bg-white top-0 sticky shadow-lg items-center justify-between h-16 lg:px-[70px] md:h-20 px-5 ">
@@ -182,9 +188,12 @@ const Navbar = () => {
                 <NavLink to="/orders" className="text-gray-700 block font-bold">
                   My Orders
                 </NavLink>
-                <NavLink to="/logout" className="text-red-500 block font-bold">
+                <div
+                  onClick={handleLogout}
+                  className="text-red-500 block font-bold cursor-pointer"
+                >
                   Logout
-                </NavLink>
+                </div>
               </div>
             )}
           </div>

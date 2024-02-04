@@ -158,7 +158,7 @@ const Home = () => {
           What's on your mind?
         </div>
         <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
-          {restaurants.length !== 0 ? (
+          {restaurants && restaurants.length !== 0 ? (
             tags.map((tag, index) => (
               <li
                 onClick={() => {

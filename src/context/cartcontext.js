@@ -58,7 +58,6 @@ export const CartProvider = ({ children }) => {
       (cartItem) => cartItem.id === item.item_id
     );
 
-    // Check if there are items in the cart from a different restaurant
     const isSameRestaurant = cartItems.every(
       (cartItem) => cartItem.restaurant_id === item.vendor_id
     );

@@ -8,6 +8,8 @@ import star from "../assets/images/star.png";
 function RestaurantScreen() {
   const location = useLocation();
   const { cartItems } = useCart();
+  const [searchText, setSearchText] = useState("");
+
 
   const restaurant = location.state.restaurant;
 
@@ -32,8 +34,18 @@ function RestaurantScreen() {
       </div>
 
       <div className="md:content-center md:mx-auto">
+      <input
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          name="Search"
+          id="Search"
+          class="bg-gray-50 w-[40%] my-4 mx-auto border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5"
+          placeholder="Search"
+          required=""
+        />
         <div className="md:flex md:mx-auto md:justify-center md:flex-col">
-          <MenuList vendor_id={restaurant._id} />
+          <MenuList searchText={searchText} vendor_id={restaurant._id} />
         </div>
 
         <div className="bottom-0 sticky">

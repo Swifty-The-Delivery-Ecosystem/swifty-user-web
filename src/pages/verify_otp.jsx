@@ -3,8 +3,6 @@ import { FcGoogle } from "react-icons/fc";
 import { FaTwitter } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -41,19 +39,13 @@ function Verify() {
           
           localStorage.setItem("token", response.data.data.token);
           nav("/");
-          toast.success(response.data.message, {
-            position: toast.POSITION.TOP_CENTER,
-          });
+         
         } else {
-          toast.error("Unexpected response format", {
-            position: toast.POSITION.TOP_CENTER,
-          });
+         
         }
       })
       .catch((error) => {
-        toast.error(error.message, {
-          position: toast.POSITION.TOP_CENTER,
-        });
+       console.log(error)
       });
   };
 

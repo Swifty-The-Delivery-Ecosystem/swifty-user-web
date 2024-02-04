@@ -18,6 +18,9 @@ const MenuItem = ({ item }) => {
       if (cartItem) {
         setQuantity(cartItem.quantity);
       }
+      else{
+        setQuantity(0);
+      }
     }
   }, [item, cartItems]);
 
@@ -41,7 +44,7 @@ const MenuItem = ({ item }) => {
               <>
                 <button
                   onClick={() => {
-                    decreaseQuantity(item);
+                      decreaseQuantity(item);
                   }}
                   className="text-slate-200 text-center font-bold px-2"
                 >
@@ -52,7 +55,7 @@ const MenuItem = ({ item }) => {
             )}
             <button
               onClick={() => {
-                increaseQuantity(item);
+                  increaseQuantity(item);
               }}
               className="text-purple-500 text-center font-bold px-2"
             >

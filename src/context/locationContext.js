@@ -8,7 +8,7 @@ export const useSetlocation = () => {
 
 export const LocationProvider = ({ children }) => {
   const [selectedLocation, setSelectedLocation] = useState({
-    label: "BH1",
+    label: "Kanhar",
     value: 1,
     index: 0,
   });

@@ -34,7 +34,7 @@ const DeliveryTrack = () => {
 
   useEffect(() => {
     fetch(
-      `http://localhost:5000/api/v1/auth/delivery_partner/get_delivery_boy/${deliveryBoyId}`,
+      `https://auth-six-pi.vercel.app/api/v1/auth/delivery_partner/get_delivery_boy/${deliveryBoyId}`,
       {
         method: "get",
         headers: {

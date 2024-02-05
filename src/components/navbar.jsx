@@ -59,10 +59,11 @@ const Navbar = () => {
     },
   ];
   const locations = [
-    { label: "BH1", value: 1 },
-    { label: "BH2", value: 2 },
-    { label: "GH1", value: 3 },
-    { label: "GH2", value: 4 },
+    { label: "Kanhar", value: 1 },
+    { label: "Indravati", value: 2 },
+    { label: "MSH", value: 3 },
+    { label: "Mess Block", value: 4 },
+    { label: "Delta", value: 5 },
   ];
   const [searchtext, setsearchtext] = useState("");
   const handleLogout = () => {

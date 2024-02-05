@@ -15,11 +15,19 @@ function SignUp() {
   const { selectedLocation, setSelectedLocation } = useSetlocation();
 
   const locations = [
-    { label: "BH1", value: 1 },
-    { label: "BH2", value: 2 },
-    { label: "GH1", value: 3 },
-    { label: "GH2", value: 4 },
+    { label: "Kanhar", value: 1 },
+    { label: "Indravati", value: 2 },
+    { label: "MSH", value: 3 },
+    { label: "Mess Block", value: 4 },
+    { label: "Delta", value: 5 },
   ];
+  // const locationMapping = {
+  //   Kanhar: 1,
+  //   Indravati: 2,
+  //   MSH: 3,
+  //   "Mess Block": 4,
+  //   Delta: 5,
+  // };
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -58,7 +66,7 @@ function SignUp() {
         navigate("/verify", { state: { email: email } });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       });
   };
 

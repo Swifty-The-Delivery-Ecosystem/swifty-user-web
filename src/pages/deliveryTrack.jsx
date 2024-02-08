@@ -33,21 +33,22 @@ const DeliveryTrack = () => {
   }, [order_id]);
 
   useEffect(() => {
-    fetch(
-      `https://auth-git-tushar-patch-1-swiftyeco.vercel.app/api/v1/auth/delivery_partner/get_delivery_boy/${deliveryBoyId}`,
-      {
-        method: "get",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // mode: "no-cors",
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setDeliveryBoy(data.data.user);
-        console.log(data.data.user);
-      });
+    deliveryBoyId &&
+      fetch(
+        `https://auth-git-tushar-patch-1-swiftyeco.vercel.app/api/v1/auth/delivery_partner/get_delivery_boy/${deliveryBoyId}`,
+        {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // mode: "no-cors",
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setDeliveryBoy(data.data.user);
+          console.log(data.data.user);
+        });
   }, [deliveryBoyId]);
 
   return (

@@ -31,7 +31,7 @@ function Checkout() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:8002/api/v1/order_service/user",
+        "https://order-service-peach.vercel.app/api/v1/order_service/user",
         {
           user_id: user_id,
           items: cartItems,
@@ -54,7 +54,7 @@ function Checkout() {
         const result = response.data;
         if (payment_method === "cod") {
           localStorage.removeItem("cart");
-          window.location.href = `http://localhost:3000/track?order_id=${orderId}`;
+          window.location.href = `https://swifty-user-web.vercel.app/track?order_id=${orderId}`;
         }
         displayRazorpay(amount);
       } else {

@@ -38,6 +38,7 @@ export const UserProvider = ({ children }) => {
       .then((response) => response.json())
       .then((data) => {
         setUserData(data.data.user);
+        console.log(data.data.user);
         setSelectedLocation({
           label: locations[data.data.user.primary_location - 1].label,
           value: data.data.user.primary_location,

@@ -7,7 +7,7 @@ import { ShimmerSimpleGallery } from "react-shimmer-effects";
 import Modal from "react-modal";
 import { v4 as uuidv4 } from "uuid";
 import { useSetlocation } from "../context/locationContext";
-
+import io from "socket.io-client";
 let amount;
 
 function Checkout() {
@@ -18,7 +18,26 @@ function Checkout() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const orderId = uuidv4();
+  const [socket, setSocket] = useState(null);
 
+  useEffect(() => {
+    const newSocket = io("http://localhost:8002");
+    setSocket(newSocket);
+
+    return () => newSocket.close();
+  }, []);
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewOrder = (orderDetails) => {
+      // Handle new order
+      console.log("New order received:", orderDetails);
+    };
+
+    socket.on("newOrder", handleNewOrder);
+
+    return () => socket.off("newOrder", handleNewOrder);
+  }, [socket]);
   async function createOrder({
     vendor_id,
     user_id,
@@ -31,7 +50,7 @@ function Checkout() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "https://order-service-peach.vercel.app/api/v1/order_service/user",
+        "http://localhost:8002/api/v1/order_service/user",
         {
           user_id: user_id,
           items: cartItems,
@@ -51,10 +70,22 @@ function Checkout() {
       );
 
       if (response.status === 201) {
+        const orderDetails = {
+          user_id: user_id,
+          items: cartItems,
+          amount: amount,
+          vendor_id: vendor_id,
+          order_instructions: "Please Send Cutlery",
+          payment_method: payment_method,
+          order_id: orderId,
+          user_location: user_location,
+        };
+        socket.emit("newOrder", orderDetails);
+
         const result = response.data;
         if (payment_method === "cod") {
           localStorage.removeItem("cart");
-          window.location.href = `https://swifty-user-web.vercel.app/track?order_id=${orderId}`;
+          window.location.href = `http://localhost:3000/track?order_id=${orderId}`;
         }
         displayRazorpay(amount);
       } else {
@@ -311,7 +342,7 @@ function Checkout() {
         </div>
       ) : (
         <div>
-          <div className="text-center bg-green-300 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600">
+          <div className="text-center bg-green-300 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer">
             CheckOut
           </div>
         </div>

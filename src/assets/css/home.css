@@ -98,7 +98,7 @@ circle {
 ul {
   display: flex;
   list-style: none;
-  height: 300px;
+  height: 320px;
   overflow-x: scroll;
   padding: 20px 0;
   flex: 0 0 600px;

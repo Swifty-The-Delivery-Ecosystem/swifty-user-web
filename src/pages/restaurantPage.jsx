@@ -40,7 +40,7 @@ function RestaurantScreen() {
           onChange={(e) => setSearchText(e.target.value)}
           name="Search"
           id="Search"
-          class="bg-gray-50 w-[40%] my-4 mx-auto border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5"
+          class="bg-gray-50 w-[60%] mt-10 mx-auto border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block p-2.5"
           placeholder="Search"
           required=""
         />

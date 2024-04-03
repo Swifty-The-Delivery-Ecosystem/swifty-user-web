@@ -275,36 +275,45 @@ function Checkout() {
       )}
 
       <div className="px-8 py-4">
-        {itemDetails.map((item) => (
-          <div key={item.id} className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <img
-                src={
-                  item.is_veg
-                    ? "https://i.pngimg.me/thumb/f/720/m2i8b1A0m2m2Z5Z5.jpg"
-                    : "https://spng.pinpng.com/pngs/s/45-459786_non-veg-icon-circle-hd-png-download.png"
-                }
-                alt="type symbol"
-                className="w-6 h-6"
-              />
-              <div className="text-lg font-bold">{item.name}</div>
-            </div>
-            <div className="flex items-center gap-8">
-              <div className="border text-green-400 p-2 rounded-md">
-                <button className="pr-4" onClick={() => decreaseQuantity(item)}>
-                  -
-                </button>
-
-                {cartItems.find((cartItem) => cartItem.id === item.item_id)
-                  ?.quantity || 0}
-                <button className="pl-4" onClick={() => increaseQuantity(item)}>
-                  +
-                </button>
+        {cartItems &&
+          cartItems.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center justify-between mb-4"
+            >
+              <div className="flex items-center gap-2">
+                <img
+                  src={
+                    item.is_veg
+                      ? "https://spng.pinpng.com/pngs/s/45-459786_non-veg-icon-circle-hd-png-download.png"
+                      : "https://i.pngimg.me/thumb/f/720/m2i8b1A0m2m2Z5Z5.jpg"
+                  }
+                  alt="type symbol"
+                  className="w-6 h-6"
+                />
+                <div className="text-lg font-bold">{item.name}</div>
               </div>
-              <div>₹ {item.price}</div>
+              <div className="flex items-center gap-8">
+                <div className="border text-green-400 px-4 py-2 rounded-md">
+                  {/* <button
+                    className="pr-4"
+                    onClick={() => decreaseQuantity(item)}
+                  >
+                    -
+                  </button> */}
+
+                  {item.quantity || 0}
+                  {/* <button
+                    className="pl-4"
+                    onClick={() => increaseQuantity(item)}
+                  >
+                    +
+                  </button> */}
+                </div>
+                {/* <div>₹ {item.price}</div> */}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
       <div className="border-b-2 border-black mx-8">
         <div className="font-medium">Bill Details</div>

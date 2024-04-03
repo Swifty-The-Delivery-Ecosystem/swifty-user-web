@@ -49,6 +49,18 @@ const Home = () => {
       name: "Sandwich",
       url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1674029860/PC_Creative%20refresh/3D_bau/banners_new/Sandwich.png",
     },
+    {
+      name: "NorthIndian",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1675667625/PC_Creative%20refresh/North_Indian_4.png",
+    },
+    {
+      name: "SouthIndian",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1675667626/PC_Creative%20refresh/South_Indian_4.png",
+    },
+    {
+      name: "Coffee",
+      url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1674029846/PC_Creative%20refresh/3D_bau/banners_new/Coffee.png",
+    },
   ];
 
   useEffect(() => {
@@ -213,50 +225,56 @@ const Home = () => {
           {/* <div class="rounded-md border-none  bg-cover bg-no-repeat h-5 animate-loader"></div> */}
           Personalized Recommendations for you
         </div>
-        <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
-          {recommendations && recommendations.length !== 0 ? (
-            recommendations.map((food, index) => {
-              const restaurant = restaurants.find(
-                (restaurant) => restaurant._id === food.vendor_id
-              );
-              return (
-                <li
-                  onClick={() => {
-                    navigate("/restaurant", {
-                      state: { restaurant: restaurant },
-                    });
-                  }}
-                  key={index}
-                  className="rounded-xl hover:cursor-pointer items-center"
-                >
-                  <img
-                    src={food.image_url}
-                    alt={food.name}
-                    className="w-80 h-40 object-cover rounded-xl mb-2"
-                  />
-                  <div className="text-left">
-                    <div className="md:text-xl text-lg font-bold">
-                      {food.name}
+        {localStorage.getItem("token") ? (
+          <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
+            {recommendations && recommendations.length !== 0 ? (
+              recommendations.map((food, index) => {
+                const restaurant = restaurants.find(
+                  (restaurant) => restaurant._id === food.vendor_id
+                );
+                return (
+                  <li
+                    onClick={() => {
+                      navigate("/restaurant", {
+                        state: { restaurant: restaurant },
+                      });
+                    }}
+                    key={index}
+                    className="rounded-xl hover:cursor-pointer items-center"
+                  >
+                    <img
+                      src={food.image_url}
+                      alt={food.name}
+                      className="w-80 h-40 object-cover rounded-xl mb-2"
+                    />
+                    <div className="text-left">
+                      <div className="md:text-xl text-lg font-bold">
+                        {food.name}
+                      </div>
+                      <div className="text-[16px] font-bold  items-center">
+                        ₹ {food.price}
+                      </div>
+                      <div className="text-[14px] text-gray-600 font-medium mb-1">
+                        {food.tags.slice(0, 4).join(" ,")}
+                      </div>
+                      <div className="text-[14px] text-gray-600 font-medium mb-1">
+                        {food.description.length > 28
+                          ? `${food.description.slice(0, 28)}...`
+                          : food.description}
+                      </div>
                     </div>
-                    <div className="text-[16px] font-bold  items-center">
-                      ₹ {food.price}
-                    </div>
-                    <div className="text-[14px] text-gray-600 font-medium mb-1">
-                      {food.tags.slice(0, 4).join(" ,")}
-                    </div>
-                    <div className="text-[14px] text-gray-600 font-medium mb-1">
-                      {food.description.length > 28
-                        ? `${food.description.slice(0, 28)}...`
-                        : food.description}
-                    </div>
-                  </div>
-                </li>
-              );
-            })
-          ) : (
-            <ShimmerSimpleGallery card imageHeight={200} caption />
-          )}
-        </ul>
+                  </li>
+                );
+              })
+            ) : (
+              <ShimmerSimpleGallery card imageHeight={200} caption />
+            )}
+          </ul>
+        ) : (
+          <div className="text-center items-center my-16 text-2xl font-bold text-gray-500">
+            Login to see personalized recommendations
+          </div>
+        )}
         <motion.div
           className="progress-indicator-line"
           style={{

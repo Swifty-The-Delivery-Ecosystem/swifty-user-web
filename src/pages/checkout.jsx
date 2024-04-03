@@ -80,7 +80,7 @@ function Checkout() {
           order_id: orderId,
           user_location: user_location,
         };
-        socket.emit("newOrder", orderDetails);
+        // socket.emit("newOrder", orderDetails);
 
         const result = response.data;
         if (payment_method === "cod") {

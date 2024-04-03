@@ -20,24 +20,24 @@ function Checkout() {
   const orderId = uuidv4();
   const [socket, setSocket] = useState(null);
 
-  useEffect(() => {
-    const newSocket = io("https://order-service-peach.vercel.app");
-    setSocket(newSocket);
+  // useEffect(() => {
+  //   const newSocket = io("http://localhost:9000");
+  //   setSocket(newSocket);
 
-    return () => newSocket.close();
-  }, []);
-  useEffect(() => {
-    if (!socket) return;
+  //   return () => newSocket.close();
+  // }, []);
+  // useEffect(() => {
+  //   if (!socket) return;
 
-    const handleNewOrder = (orderDetails) => {
-      // Handle new order
-      console.log("New order received:", orderDetails);
-    };
+  //   const handleNewOrder = (orderDetails) => {
+  //     // Handle new order
+  //     console.log("New order received:", orderDetails);
+  //   };
 
-    socket.on("newOrder", handleNewOrder);
+  //   socket.on("newOrder", handleNewOrder);
 
-    return () => socket.off("newOrder", handleNewOrder);
-  }, [socket]);
+  //   return () => socket.off("newOrder", handleNewOrder);
+  // }, [socket]);
   async function createOrder({
     vendor_id,
     user_id,

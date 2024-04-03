@@ -130,3 +130,17 @@ li {
 li:last-of-type {
   margin: 0;
 }
+.loader {
+  background-color: linear-gradient(to right, #b1d5ee, #c953e98a, #9ed7ff);
+  animation: loader 4s infinite linear;
+  background-size: 800px 104px;
+}
+
+@keyframes loader {
+  0% {
+    background-position: -800px 0px;
+  }
+  100% {
+    background-position: 800px 0px;
+  }
+}

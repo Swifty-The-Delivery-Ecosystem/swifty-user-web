@@ -6,14 +6,19 @@ import { motion, useScroll } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ShimmerSimpleGallery } from "react-shimmer-effects";
 import { useSetlocation } from "../context/locationContext";
+import { useCart } from "../context/cartcontext";
+import MenuItem from "../components/simpleCard";
+import { useProfile } from "../context/userContext";
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [restaurantsTag, setRestaurantsTag] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const ref = useRef(null);
   const { scrollXProgress } = useScroll({ container: ref });
   const navigate = useNavigate();
   const { selectedLocation, setSelectedLocation } = useSetlocation();
+  const { userData } = useProfile();
 
   const tags = [
     {
@@ -67,6 +72,30 @@ const Home = () => {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
+
+  useEffect(() => {
+    userData && console.log(userData._id);
+    let token = localStorage.getItem("token");
+    token &&
+      userData &&
+      fetch(
+        `https://order-service-peach.vercel.app/api/v1/order_service/user/recommend/${userData._id}`,
+        {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setRecommendations(data.recommendedItems);
+          console.log(recommendations);
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+  }, [userData]);
 
   const handleTagClick = (tag) => {
     fetch(
@@ -170,6 +199,60 @@ const Home = () => {
                 <img src={tag.url} alt={tag.name} />
               </li>
             ))
+          ) : (
+            <ShimmerSimpleGallery card imageHeight={200} caption />
+          )}
+        </ul>
+        <motion.div
+          className="progress-indicator-line"
+          style={{
+            width: scrollXProgress ? `${scrollXProgress * 100}%` : "0%",
+          }}
+        />
+        <div className="md:text-4xl text-xl mx-8 my-6 font-extrabold loader text-transparent bg-gradient-to-r from-blue-300 via-pink-400 to-blue-400 bg-clip-text font-roboto">
+          {/* <div class="rounded-md border-none  bg-cover bg-no-repeat h-5 animate-loader"></div> */}
+          Personalized Recommendations for you
+        </div>
+        <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
+          {recommendations && recommendations.length !== 0 ? (
+            recommendations.map((food, index) => {
+              const restaurant = restaurants.find(
+                (restaurant) => restaurant._id === food.vendor_id
+              );
+              return (
+                <li
+                  onClick={() => {
+                    navigate("/restaurant", {
+                      state: { restaurant: restaurant },
+                    });
+                  }}
+                  key={index}
+                  className="rounded-xl hover:cursor-pointer items-center"
+                >
+                  <img
+                    src={food.image_url}
+                    alt={food.name}
+                    className="w-80 h-40 object-cover rounded-xl mb-2"
+                  />
+                  <div className="text-left">
+                    <div className="md:text-xl text-lg font-bold">
+                      {food.name}
+                    </div>
+                    <div className="text-[16px] font-bold  items-center">
+                      ₹ {food.price}
+                    </div>
+                    <div className="text-[14px] text-gray-600 font-medium mb-1">
+                      {food.tags.slice(0, 4).join(" ,")}
+                    </div>
+                    <div className="text-[14px] text-gray-600 font-medium mb-1">
+                      {food.description.length > 28
+                        ? `${food.description.slice(0, 28)}...`
+                        : food.description}
+                    </div>
+                  </div>
+                </li>
+              );
+            })
           ) : (
             <ShimmerSimpleGallery card imageHeight={200} caption />
           )}

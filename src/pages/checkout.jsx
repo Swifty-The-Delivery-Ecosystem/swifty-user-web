@@ -233,10 +233,10 @@ function Checkout() {
         try {
           const cartItemsString = JSON.stringify(cartItems);
           const response = await axios.get(
-            `https://inventory-service-tau.vercel.app/api/customer/getitem?cartItems=${cartItemsString}`
+            `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/getitem?cartItems=${cartItemsString}`
           );
           setItemDetails(response.data["finalitems"]);
-          console.log(response.data);
+          console.log(response.data["finalitems"]);
         } catch (error) {
           console.error("Error fetching item details:", error);
         }
@@ -275,8 +275,8 @@ function Checkout() {
       )}
 
       <div className="px-8 py-4">
-        {cartItems &&
-          cartItems.map((item) => (
+        {itemDetails &&
+          itemDetails.map((item) => (
             <div
               key={item.id}
               className="flex items-center justify-between mb-4"
@@ -284,9 +284,9 @@ function Checkout() {
               <div className="flex items-center gap-2">
                 <img
                   src={
-                    item.is_veg
-                      ? "https://spng.pinpng.com/pngs/s/45-459786_non-veg-icon-circle-hd-png-download.png"
-                      : "https://i.pngimg.me/thumb/f/720/m2i8b1A0m2m2Z5Z5.jpg"
+                    item.is_veg 
+                      ? "https://i.pngimg.me/thumb/f/720/m2i8b1A0m2m2Z5Z5.jpg"
+                      : "https://spng.pinpng.com/pngs/s/45-459786_non-veg-icon-circle-hd-png-download.png"
                   }
                   alt="type symbol"
                   className="w-6 h-6"
@@ -294,23 +294,24 @@ function Checkout() {
                 <div className="text-lg font-bold">{item.name}</div>
               </div>
               <div className="flex items-center gap-8">
-                <div className="border text-green-400 px-4 py-2 rounded-md">
-                  {/* <button
+                <div className="border text-green-400 p-2 rounded-md">
+                  <button
                     className="pr-4"
                     onClick={() => decreaseQuantity(item)}
                   >
                     -
-                  </button> */}
+                  </button>
 
-                  {item.quantity || 0}
-                  {/* <button
+                  {cartItems.find((cartItem) => cartItem.id === item.item_id)
+                    ?.quantity || 0}
+                  <button
                     className="pl-4"
                     onClick={() => increaseQuantity(item)}
                   >
                     +
-                  </button> */}
+                  </button>
                 </div>
-                {/* <div>₹ {item.price}</div> */}
+                <div>₹ {item.price}</div>
               </div>
             </div>
           ))}
@@ -352,7 +353,9 @@ function Checkout() {
       ) : (
         <div>
           <div className="text-center bg-green-300 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer">
-            CheckOut
+            {localStorage.getItem("token")
+              ? "CheckOut"
+              : "Please Login To CheckOut"}
           </div>
         </div>
       )}

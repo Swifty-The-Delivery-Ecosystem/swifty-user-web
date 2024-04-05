@@ -9,6 +9,7 @@ export const useProfile = () => {
 
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
+  const [loading, setloading] = useState(false);
   const { selectedLocation, setSelectedLocation } = useSetlocation();
   const locations = [
     { label: "BH1", value: 1 },
@@ -23,7 +24,7 @@ export const UserProvider = ({ children }) => {
     if (!token) {
       return;
     }
-
+    setloading(true);
     fetchCurrentUser(token);
   }, []);
 
@@ -38,7 +39,6 @@ export const UserProvider = ({ children }) => {
       .then((response) => response.json())
       .then((data) => {
         setUserData(data.data.user);
-        console.log(data.data.user);
         setSelectedLocation({
           label: locations[data.data.user.primary_location - 1].label,
           value: data.data.user.primary_location,
@@ -49,7 +49,9 @@ export const UserProvider = ({ children }) => {
   };
   const contextValue = {
     userData,
+    loading,
     setUserData,
+    setloading,
   };
 
   return (

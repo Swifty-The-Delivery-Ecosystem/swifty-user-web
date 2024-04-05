@@ -15,19 +15,35 @@ const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const { selectedLocation, setSelectedLocation } = useSetlocation();
   const { cartItems } = useCart();
-  const { userData } = useProfile();
+  const { userData, loading, setloading } = useProfile();
   const dropdownRef = useRef(null);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const navigate = useNavigate();
+  const [authenticated, setAuthenticated] = useState(
+    window.location.pathname !== "/login" || "/register"
+  );
 
   const toggleDropdown = () => {
     setDropdownVisible(!isDropdownVisible);
   };
+
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setDropdownVisible(false);
     }
   };
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setloading(true);
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   if (!loading && userData) {
+  //     setAuthenticated(true); // Set authenticated to true when loading is false and userData exists
+  //   }
+  // }, []);
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
@@ -44,6 +60,13 @@ const Navbar = () => {
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setloading(false);
+    navigate("/login");
+  };
+
   const navmenu = [
     {
       link: "/update",
@@ -66,10 +89,6 @@ const Navbar = () => {
     { label: "Delta", value: 5 },
   ];
   const [searchtext, setsearchtext] = useState("");
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove the token from local storage
-    navigate("/login"); // Redirect to the login page after logout
-  };
 
   return (
     <nav className="flex z-50 bg-white top-0 sticky shadow-lg items-center justify-between h-16 lg:px-[70px] md:h-20 px-5 ">
@@ -125,7 +144,7 @@ const Navbar = () => {
           value={searchtext}
           name="Search"
           id="Search"
-          class="bg-gray-50 border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5"
+          className="bg-gray-50 border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5"
           placeholder="Search"
           required=""
         />
@@ -148,7 +167,7 @@ const Navbar = () => {
                 <div key={menu.name}>
                   <NavLink
                     to={menu.link}
-                    activeclassname="text-green-700"
+                    activeClassName="text-green-700"
                     className="text-xl font-medium p-2"
                     onClick={toggleMenu}
                   >
@@ -173,13 +192,17 @@ const Navbar = () => {
         )}
       </div>
       <div className="hidden items-center md:flex space-x-12 menu">
-        {userData ? (
+        {loading || localStorage.getItem("token") ? (
           <div className="relative" ref={dropdownRef}>
             <div
               onClick={toggleDropdown}
               className="text-lg font-bold cursor-pointer"
             >
-              {userData.name}
+              <img
+                src="https://raw.githubusercontent.com/Aditya062003/Ecommerce-Site-Care-Leisure/main/assets/images/users/3.jpg"
+                alt=""
+                className="w-16 h-16 rounded-full object-cover"
+              />
             </div>
             {isDropdownVisible && (
               <div className="absolute top-12 z-50 right-0 bg-white shadow-md px-8 rounded-xl py-4 space-y-2">

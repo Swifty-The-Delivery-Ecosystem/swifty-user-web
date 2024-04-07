@@ -138,17 +138,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div className="w-1/2 hidden md:block">
-        <input
-          type="text"
-          value={searchtext}
-          name="Search"
-          id="Search"
-          className="bg-gray-50 border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5"
-          placeholder="Search"
-          required=""
-        />
-      </div>
 
       {/* Mobile Menu */}
       <div className="md:hidden">
@@ -191,7 +180,32 @@ const Navbar = () => {
           </div>
         )}
       </div>
-      <div className="hidden items-center md:flex space-x-12 menu">
+
+      <div
+        onClick={() => {
+          navigate("/search");
+        }}
+        className="hidden cursor-pointer items-center md:flex space-x-12 menu"
+      >
+        <div className="hidden text-right md:block">
+          <div className="p-2 flex gap-2 items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+              />
+            </svg>
+            <div>Search</div>
+          </div>
+        </div>
         {loading || localStorage.getItem("token") ? (
           <div className="relative" ref={dropdownRef}>
             <div

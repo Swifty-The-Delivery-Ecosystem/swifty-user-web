@@ -11,31 +11,15 @@ export const useRestaurant = () => {
 export const RestaurantProvider = ({ children }) => {
   const { cartItems } = useCart();
   const [details, setdetails] = useState();
-
-  const fetchRestaurantDetails = async () => {
-    try {
-      if (cartItems) {
-        const rid = String(cartItems[0]["restaurant_id"]);
-
-        const response = await axios.get(
-          `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors/details/${rid}`
-        );
-
-        setdetails(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching total cart price:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (cartItems) {
-      fetchRestaurantDetails();
-    }
-  }, [cartItems]);
+  const [restaurants, setRestaurants] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
 
   const contextValue = {
     details,
+    restaurants,
+    setRestaurants,
+    recommendations,
+    setRecommendations,
   };
 
   return (

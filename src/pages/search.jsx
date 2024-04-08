@@ -15,7 +15,10 @@ const Search = () => {
   const { restaurants, setRestaurants, recommendations, setRecommendations } =
     useRestaurant();
   const [selectedButton, setSelectedButton] = useState("restaurant");
+  const [searchTerm, setSearchTerm] = useState("");
   const { userData } = useProfile();
+  const [searchRestaurant, setSearchRestaurant] = useState(restaurants);
+  const [searchItems, setsearchItems] = useState(recommendations);
 
   useEffect(() => {
     if (restaurants.length !== 0) return;
@@ -36,9 +39,11 @@ const Search = () => {
           () => data
         ).flat();
         setRestaurants(repeatedRestaurants);
+        setSearchRestaurant(repeatedRestaurants);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
+
   useEffect(() => {
     userData && console.log(userData._id);
     let token = localStorage.getItem("token");
@@ -59,10 +64,32 @@ const Search = () => {
         .then((data) => {
           console.log(data);
           setRecommendations(data.recommendedItems);
-          console.log(recommendations);
+          setsearchItems(data.recommendedItems);
         })
         .catch((error) => console.error("Error fetching data:", error));
   }, [userData]);
+
+  const handleSearch = () => {
+    if (!searchTerm) {
+      setSearchRestaurant(restaurants);
+      setsearchItems(recommendations);
+      return;
+    }
+
+    const itemSearchUrl = `http://localhost:4005/api/v1/inventory/customer/searchItem?itemName=${searchTerm}`;
+    const restaurantSearchUrl = `http://localhost:4005/api/v1/inventory/customer/searchRestaurant?restaurantName=${searchTerm}`;
+
+    Promise.all([
+      fetch(itemSearchUrl).then((response) => response.json()),
+      fetch(restaurantSearchUrl).then((response) => response.json()),
+    ])
+      .then(([itemsData, restaurantsData]) => {
+        setSearchRestaurant(restaurantsData);
+        setsearchItems(itemsData);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+
   const tags = [
     {
       name: "Pizza",
@@ -131,15 +158,30 @@ const Search = () => {
 
   return (
     <div className="w-1/2 mx-auto">
-      <div className="mx-auto text-center">
-        <input
-          type="text"
-          name="Search"
-          id="Search"
-          className="bg-gray-50 w-full mt-8  border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block p-2.5"
-          placeholder="Search your dishes or restaurants . . ."
-          required=""
-        />
+      <div className="mx-auto items-center text-center">
+        <div className="flex mt-8 items-center">
+          <input
+            type="text"
+            name="Search"
+            id="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="bg-gray-50 w-full border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block p-2.5"
+            placeholder="Search your dishes or restaurants . . ."
+            required=""
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
+          />
+          <button
+            onClick={handleSearch}
+            className="mx-4 bg-purple-400 px-4 py-2 rounded-lg text-white hover:bg-purple-500"
+          >
+            Search
+          </button>
+        </div>
       </div>
       <div className="mx-auto mb-4 ">
         <div className="flex mx-auto justify-start mt-4">
@@ -193,9 +235,9 @@ const Search = () => {
       {selectedButton === "restaurant" && (
         <div className="h-full bg-gray-100 p-4">
           {/* <ul className="mx-8 flex gap-8"> */}
-          {restaurants.length !== 0 ? (
+          {searchRestaurant.length !== 0 ? (
             <div className="grid grid-cols-2 gap-4">
-              {restaurants.map((restaurant, index) => (
+              {searchRestaurant.map((restaurant, index) => (
                 <div
                   key={index}
                   onClick={() => {
@@ -238,9 +280,9 @@ const Search = () => {
       )}
       {selectedButton === "dish" && localStorage.getItem("token") ? (
         <div className="h-full bg-gray-100 p-4">
-          {recommendations && recommendations.length !== 0 ? (
+          {searchItems && searchItems.length !== 0 ? (
             <div className="grid grid-cols-2 gap-4">
-              {recommendations.map((food, index) => {
+              {searchItems.map((food, index) => {
                 const restaurant = restaurants.find(
                   (restaurant) => restaurant._id === food.vendor_id
                 );

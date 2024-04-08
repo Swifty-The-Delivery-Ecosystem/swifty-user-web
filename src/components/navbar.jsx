@@ -46,6 +46,18 @@ const Navbar = () => {
   // }, []);
 
   useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setloading(true);
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   if (!loading && userData) {
+  //     setAuthenticated(true); // Set authenticated to true when loading is false and userData exists
+  //   }
+  // }, []);
+
+  useEffect(() => {
     document.addEventListener("click", handleClickOutside);
 
     return () => {
@@ -137,6 +149,17 @@ const Navbar = () => {
             />
           </div>
         </div>
+      </div>
+      <div className="w-1/2 hidden md:block">
+        <input
+          type="text"
+          value={searchtext}
+          name="Search"
+          id="Search"
+          className="bg-gray-50 border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5"
+          placeholder="Search"
+          required=""
+        />
       </div>
 
       {/* Mobile Menu */}

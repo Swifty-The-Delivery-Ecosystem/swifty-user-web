@@ -193,13 +193,13 @@ const Navbar = () => {
         )}
       </div>
 
-      <div className="hidden cursor-pointer items-center md:flex space-x-12 menu">
-        <div
-          onClick={() => {
-            navigate("/search");
-          }}
-          className="hidden text-right md:block"
-        >
+      <div
+        onClick={() => {
+          navigate("/search");
+        }}
+        className="hidden cursor-pointer items-center md:flex space-x-12 menu"
+      >
+        <div className="hidden text-right md:block">
           <div className="p-2 flex gap-2 items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"

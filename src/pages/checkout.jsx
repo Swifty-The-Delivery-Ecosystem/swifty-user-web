@@ -284,7 +284,7 @@ function Checkout() {
               <div className="flex items-center gap-2">
                 <img
                   src={
-                    item.is_veg 
+                    !item.is_veg 
                       ? "https://i.pngimg.me/thumb/f/720/m2i8b1A0m2m2Z5Z5.jpg"
                       : "https://spng.pinpng.com/pngs/s/45-459786_non-veg-icon-circle-hd-png-download.png"
                   }

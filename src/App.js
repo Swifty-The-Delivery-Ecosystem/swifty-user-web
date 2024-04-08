@@ -12,6 +12,7 @@ import DeliveryTrack from "./pages/deliveryTrack";
 import OrderHistory from "./pages/OrderHistory";
 import UpdateProfile from "./pages/updateProfile";
 import { UserProvider } from "./context/userContext";
+import Search from "./pages/search";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/track" element={<DeliveryTrack />} />
           <Route path="/orders" element={<OrderHistory />} />
           <Route path="/update" element={<UpdateProfile />} />
+          <Route path="/search" element={<Search />} />
         </Routes>
       </BrowserRouter>
     </UserProvider>

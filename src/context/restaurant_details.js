@@ -11,7 +11,16 @@ export const useRestaurant = () => {
 export const RestaurantProvider = ({ children }) => {
   const { cartItems } = useCart();
   const [details, setdetails] = useState();
+  const [restaurants, setRestaurants] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
 
+  const contextValue = {
+    details,
+    restaurants,
+    setRestaurants,
+    recommendations,
+    setRecommendations,
+  };
   const fetchRestaurantDetails = async () => {
     try {
       if (cartItems) {
@@ -33,11 +42,6 @@ export const RestaurantProvider = ({ children }) => {
       fetchRestaurantDetails();
     }
   }, [cartItems]);
-
-  const contextValue = {
-    details,
-  };
-
   return (
     <RestaurantContext.Provider value={contextValue}>
       {children}

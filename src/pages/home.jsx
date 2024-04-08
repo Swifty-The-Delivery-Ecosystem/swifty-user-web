@@ -9,11 +9,14 @@ import { useSetlocation } from "../context/locationContext";
 import { useCart } from "../context/cartcontext";
 import MenuItem from "../components/simpleCard";
 import { useProfile } from "../context/userContext";
+import { useRestaurant } from "../context/restaurant_details";
 
 const Home = () => {
-  const [restaurants, setRestaurants] = useState([]);
+  // const [restaurants, setRestaurants] = useState([]);
+  const { restaurants, setRestaurants, recommendations, setRecommendations } =
+    useRestaurant();
   const [restaurantsTag, setRestaurantsTag] = useState([]);
-  const [recommendations, setRecommendations] = useState([]);
+  // const [recommendations, setRecommendations] = useState([]);
   const ref = useRef(null);
   const { scrollXProgress } = useScroll({ container: ref });
   const navigate = useNavigate();

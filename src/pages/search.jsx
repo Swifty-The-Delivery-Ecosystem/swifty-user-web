@@ -76,8 +76,8 @@ const Search = () => {
       return;
     }
 
-    const itemSearchUrl = `http://localhost:4005/api/v1/inventory/customer/searchItem?itemName=${searchTerm}`;
-    const restaurantSearchUrl = `http://localhost:4005/api/v1/inventory/customer/searchRestaurant?restaurantName=${searchTerm}`;
+    const itemSearchUrl = `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/searchItem?itemName=${searchTerm}`;
+    const restaurantSearchUrl = `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/searchRestaurant?restaurantName=${searchTerm}`;
 
     Promise.all([
       fetch(itemSearchUrl).then((response) => response.json()),

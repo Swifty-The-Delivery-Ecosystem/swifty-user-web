@@ -150,17 +150,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div className="w-1/2 hidden md:block">
-        <input
-          type="text"
-          value={searchtext}
-          name="Search"
-          id="Search"
-          className="bg-gray-50 border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5"
-          placeholder="Search"
-          required=""
-        />
-      </div>
 
       {/* Mobile Menu */}
       <div className="md:hidden">
@@ -204,13 +193,13 @@ const Navbar = () => {
         )}
       </div>
 
-      <div
-        onClick={() => {
-          navigate("/search");
-        }}
-        className="hidden cursor-pointer items-center md:flex space-x-12 menu"
-      >
-        <div className="hidden text-right md:block">
+      <div className="hidden cursor-pointer items-center md:flex space-x-12 menu">
+        <div
+          onClick={() => {
+            navigate("/search");
+          }}
+          className="hidden text-right md:block"
+        >
           <div className="p-2 flex gap-2 items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"

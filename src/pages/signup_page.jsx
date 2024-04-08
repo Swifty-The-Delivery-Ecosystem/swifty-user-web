@@ -74,7 +74,7 @@ function SignUp() {
     <div className="min-h-screen mt-8 flex flex-wrap">
       <div className="w-1/2 md:block text-center hidden mx-auto my-4">
         <img
-          src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/authentication/illustration.svg"
+          src="https://i.ibb.co/3kg7By0/image.png"
           alt=""
           className="mx-auto text-center"
         />

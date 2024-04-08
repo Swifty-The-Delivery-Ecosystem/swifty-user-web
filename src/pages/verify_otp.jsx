@@ -36,16 +36,13 @@ function Verify() {
       .post(url, data, { headers })
       .then((response) => {
         if (response.data && response.data.type === "success") {
-          
           localStorage.setItem("token", response.data.data.token);
           nav("/");
-         
         } else {
-         
         }
       })
       .catch((error) => {
-       console.log(error)
+        console.log(error);
       });
   };
 
@@ -53,7 +50,7 @@ function Verify() {
     <div className="min-h-screen mt-8 flex flex-wrap">
       <div className="w-1/2 md:block text-center hidden mx-auto my-4">
         <img
-          src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/authentication/illustration.svg"
+          src="https://i.ibb.co/3kg7By0/image.png"
           alt=""
           className="mx-auto text-center"
         />
@@ -93,14 +90,7 @@ function Verify() {
             </div>
             <div></div>
             <div className="my-1 text-center font-light">or</div>
-            <div className="border-2 cursor-pointer flex justify-center hover:bg-gray-50 rounded-lg mb-2 mx-4 text-center py-2 px-auto">
-              <FcGoogle size={20} />{" "}
-              <div className="ml-2">Sign in with Google</div>
-            </div>
-            <div className="border-2 flex justify-center cursor-pointer hover:bg-gray-50 rounded-lg mb-4 mx-4 text-center py-2 px-auto">
-              <FaTwitter size={20} />{" "}
-              <div className="ml-2">Sign in with Twitter</div>
-            </div>
+
             <div class="flex items-center mx-4 justify-between">
               <div class="flex items-start">
                 <div class="flex items-center h-5">

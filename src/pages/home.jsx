@@ -107,7 +107,6 @@ const Home = () => {
         .then((data) => {
           console.log(data);
           setRecommendations(data.recommendedItems);
-          console.log(recommendations);
         })
         .catch((error) => console.error("Error fetching data:", error));
   }, [userData]);

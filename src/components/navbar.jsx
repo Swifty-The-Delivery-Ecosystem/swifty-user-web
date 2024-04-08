@@ -150,17 +150,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div className="w-1/2 hidden md:block">
-        <input
-          type="text"
-          value={searchtext}
-          name="Search"
-          id="Search"
-          className="bg-gray-50 border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5"
-          placeholder="Search"
-          required=""
-        />
-      </div>
 
       {/* Mobile Menu */}
       <div className="md:hidden">

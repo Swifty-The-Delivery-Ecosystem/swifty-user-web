@@ -113,7 +113,7 @@ const Home = () => {
     token &&
       userData &&
       fetch(
-        `https://order-service-peach.vercel.app/api/v1/order_service/user/recommend/${userData._id}`,
+        `https://order-service-git-main-swiftyeco.vercel.app/api/v1/order_service/user/recommend/${userData._id}`,
         {
           method: "get",
           headers: {

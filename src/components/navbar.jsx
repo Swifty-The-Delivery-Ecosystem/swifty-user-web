@@ -136,7 +136,6 @@ const Navbar = () => {
               options={locations}
               searchable
               onChange={(value) => {
-                console.log(value);
                 setSelectedLocation(value);
                 fetchRestaurant(value.value);
               }}

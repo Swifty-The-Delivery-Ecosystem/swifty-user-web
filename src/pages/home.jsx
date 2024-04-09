@@ -24,6 +24,7 @@ const Home = () => {
   const { userData } = useProfile();
   const [showVegetarian, setShowVegetarian] = useState(false);
   const [showNonVegetarian, setShowNonVegetarian] = useState(false);
+  const [offerItems, setofferItems] = useState([]);
 
   const tags = [
     {
@@ -69,7 +70,23 @@ const Home = () => {
   ];
 
   useEffect(() => {
-    console.log(selectedLocation.value);
+    fetch(
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/getOfferItems`,
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setofferItems(data.menuItems);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
     fetch(
       `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?primary_location=${selectedLocation.value}`,
       {
@@ -86,7 +103,6 @@ const Home = () => {
           { length: 4 },
           () => data
         ).flat();
-        console.log(data);
         setRestaurants(repeatedRestaurants);
       })
       .catch((error) => console.error("Error fetching data:", error));
@@ -180,25 +196,10 @@ const Home = () => {
                 : "bg-white text-black border border-black"
             }`}
             onClick={() => {
-              setShowVegetarian(true);
-              setShowNonVegetarian(false);
+              setShowVegetarian(!showVegetarian);
             }}
           >
-            Veg
-          </button>
-          {/* Button for Non Vegetarian */}
-          <button
-            className={`mx-4 py-2 px-4 rounded-lg ${
-              showNonVegetarian
-                ? "bg-purple-500 text-white"
-                : "bg-white text-black border border-black"
-            }`}
-            onClick={() => {
-              setShowVegetarian(false);
-              setShowNonVegetarian(true);
-            }}
-          >
-            Non Veg
+            Pure Veg
           </button>
           <select
             className="mx-4 p-2 rounded-md"
@@ -210,55 +211,111 @@ const Home = () => {
             <option value="highToLow">Rating: High to Low</option>
           </select>
         </div>
-        <ul
-          className="mx-8 my-8 flex gap-8 overflow-y-hidden relative"
+        <div
+          className="mx-8 my-8 overflow-y-hidden flex gap-10 relative"
           ref={ref}
         >
           {sortedRestaurants.length !== 0 ? (
             sortedRestaurants.map((restaurant, index) => (
-              <li
+              <div
                 onClick={() => {
                   navigate("/restaurant", {
                     state: { restaurant: restaurant },
                   });
                 }}
                 key={index}
-                className="bg-gray-100 inline-block flex-none w-250 rounded-xl hover:cursor-pointer items-center"
+                className="inline-block text-center  flex-none rounded-xl hover:cursor-pointer items-center"
               >
                 <img
                   src={restaurant.images[0]}
                   alt={restaurant.restaurantName}
-                  className="w-full h-36 object-cover rounded-xl mb-2"
+                  className="w-[20rem] h-[13rem] object-cover rounded-xl mb-2"
                 />
                 <div className="text-left px-2">
-                  <div className="md:text-xl text-lg font-bold mb-2">
+                  <div className="md:text-2xl text-lg font-medium mb-2">
                     {restaurant.restaurantName}
                   </div>
-                  <div className="text-[14px] flex gap-2 items-center text-gray-500 mb-1">
-                    <img src={star} alt="" className="w-5 h-5" />{" "}
-                    {restaurant.ratings}
+                  <div className="text-xl font-bold flex gap-2 items-center text-gray-900 mb-1">
+                    <img src={star} alt="" className="w-8 h-8" />{" "}
+                    {restaurant.ratings?.toFixed(1)}
                   </div>
-                  <div className="text-[14px] text-gray-600 font-medium mb-1">
+                  <div className="text-lg text-gray-600 font-medium mb-1">
                     {restaurant.tags.slice(0, 4).join(" ,")}
                   </div>
-                  <div className="text-[14px] text-gray-600 font-medium mb-1">
+                  <div className="text-lg text-gray-600 font-medium mb-1">
                     {restaurant.description.length > 28
                       ? `${restaurant.description.slice(0, 28)}...`
                       : restaurant.description}
                   </div>
                 </div>
-              </li>
+              </div>
             ))
+          ) : (
+            <ShimmerSimpleGallery row={1} card imageHeight={200} />
+          )}
+        </div>
+        <div className="md:text-3xl text-xl mx-8 my-6  font-extrabold font-roboto">
+          Best Offers For You
+        </div>
+        <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
+          {offerItems && offerItems.length !== 0 ? (
+            offerItems.map((food, index) => {
+              const restaurant = restaurants.find(
+                (restaurant) => restaurant._id === food.vendor_id
+              );
+              return (
+                <li
+                  onClick={() => {
+                    navigate("/restaurant", {
+                      state: { restaurant: restaurant },
+                    });
+                  }}
+                  key={index}
+                  className="rounded-xl hover:cursor-pointer items-center"
+                >
+                  <img
+                    src={food.image_url}
+                    alt={food.name}
+                    className="w-80 h-40 object-cover rounded-xl mb-2"
+                  />
+                  <div className="text-left">
+                    <div className="md:text-xl text-lg font-bold">
+                      {food.name}
+                    </div>
+                    <h3 className="text-xl font-medium">
+                      {food.on_offer ? (
+                        <>
+                          <span className="line-through text-lg text-gray-500">
+                            ₹ {food.price}
+                          </span>
+                          <span className="text-xl mx-1 text-red-500">
+                            ₹ {food.offer_price}
+                          </span>
+                        </>
+                      ) : (
+                        `₹${food.price}`
+                      )}
+                    </h3>
+                    <div className="text-[14px] text-gray-600 font-medium mb-1">
+                      {food.tags.slice(0, 4).join(" ,")}
+                    </div>
+                    <div className="text-[14px] text-gray-600 font-medium mb-1">
+                      {food.description.length > 28
+                        ? `${food.description.slice(0, 28)}...`
+                        : food.description}
+                    </div>
+                  </div>
+                </li>
+              );
+            })
           ) : (
             <ShimmerSimpleGallery card imageHeight={200} caption />
           )}
         </ul>
 
-      
         <div className="md:text-3xl text-xl mx-8 my-6  font-extrabold font-roboto">
           What's on your mind?
         </div>
-       
         <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
           {restaurants && restaurants.length !== 0 ? (
             tags.map((tag, index) => (

@@ -45,7 +45,6 @@ const Search = () => {
   }, []);
 
   useEffect(() => {
-    userData && console.log(userData._id);
     let token = localStorage.getItem("token");
     token &&
       userData &&
@@ -62,7 +61,6 @@ const Search = () => {
       )
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setRecommendations(data.recommendedItems);
           setsearchItems(data.recommendedItems);
         })

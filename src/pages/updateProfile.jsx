@@ -31,7 +31,7 @@ const UpdateProfile = () => {
   const handleUpdateProfile = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/v1/auth/users/${userData._id}/update`,
+        `https://auth-six-pi.vercel.app/api/v1/auth/users/${userData._id}/update`,
         updatedData,
         {
           headers: {

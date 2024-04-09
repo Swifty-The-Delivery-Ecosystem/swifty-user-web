@@ -26,7 +26,7 @@ const MenuItem = ({ item }) => {
   }, [item, cartItems]);
 
   if (!item.rating) {
-    item.rating = 3;
+    item.rating = "No Ratings";
   }
 
   return (
@@ -35,7 +35,7 @@ const MenuItem = ({ item }) => {
         <div className="flex-shrink-0 mx-4 col-span-1/4">
           <img
             src={item.image_url}
-            className="w-full h-[12rem] object-fill rounded-md"
+            className="w-[20rem] h-[14rem] object-fill rounded-md"
             alt={item.name}
           />
         </div>
@@ -50,15 +50,34 @@ const MenuItem = ({ item }) => {
               alt="type symbol"
               className="w-6 h-6"
             />
-            <h3 className="text-lg font-semibold">{item.name}</h3>
+            <h3 className="text-2xl font-semibold">{item.name}</h3>
           </div>
-          <h3 className="text-lg font-medium">₹ {item.price}</h3>
+          <h3 className="text-xl font-medium">
+            {item.on_offer ? (
+              <>
+                <span className="line-through text-lg text-gray-500">
+                  ₹ {item.price}
+                </span>
+                <span className="text-xl mx-1 text-red-500">
+                  ₹ {item.offer_price}
+                </span>
+              </>
+            ) : (
+              `₹${item.price}`
+            )}
+          </h3>
+
           <div className="flex gap-2">
             <img src={star} className="w-6 h-6" />
-            <h3 className="text-lg font-medium"> {item.rating}</h3>
+            <h3 className="text-xl font-medium">
+              {" "}
+              {item.rating != "No Ratings"
+                ? item.rating?.toFixed(1)
+                : "No Ratings"}
+            </h3>
           </div>
 
-          <p className="text-gray-500 text-wrap text-sm">
+          <p className="text-gray-500 text-wrap text-lg">
             {item.description.length > 32
               ? `${item.description.slice(0, 28)}...`
               : item.description}

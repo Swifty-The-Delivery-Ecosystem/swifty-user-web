@@ -58,7 +58,7 @@ const OrderHistory = () => {
       if (!response.ok) {
         throw new Error("Failed to submit restaurant rating");
       }
-
+      console.log("Restaurant rating submitted successfully");
       toast.success("Restaurant rating submitted successfully");
       setRatingsSubmitted((prevSubmitted) => ({
         ...prevSubmitted,
@@ -90,6 +90,7 @@ const OrderHistory = () => {
       if (!response.ok) {
         throw new Error("Failed to submit item rating");
       }
+      console.log("Item rating submitted successfully");
       toast.success("Item rating submitted successfully");
       setRatingsSubmitted((prevSubmitted) => ({
         ...prevSubmitted,

@@ -14,7 +14,7 @@ function RestaurantScreen() {
   const restaurant = location.state.restaurant;
 
   return (
-    <div className="md:content-center mx-1 md:mx-auto">
+    <div className="md:content-center mx-1 my-2 md:mx-auto">
       <div className="flex bg-white mx-auto shadow-lg md:w-1/2 justify-between rounded-xl gap-6 px-8 py-4 items-start">
         <div>
           <img className="h-40 object-cover" src={restaurant.images[0]} alt="" />

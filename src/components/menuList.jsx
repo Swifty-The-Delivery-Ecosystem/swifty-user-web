@@ -6,6 +6,7 @@ const MenuList = ({ vendor_id, searchText }) => {
   const [filteredMenuItems, setFilteredMenuItems] = useState([]);
   const [isVeg, setIsVeg] = useState(false);
   const [sortOrder, setSortOrder] = useState("lowToHigh");
+  const [ratingSortOrder, setRatingSortOrder] = useState("highToLow");
 
   useEffect(() => {
     fetch(
@@ -38,11 +39,21 @@ const MenuList = ({ vendor_id, searchText }) => {
       filteredItems.sort((a, b) => b.price - a.price);
     }
 
+    if (ratingSortOrder === "lowToHigh") {
+      filteredItems.sort((a, b) => a.rating - b.rating);
+    } else if (ratingSortOrder === "highToLow") {
+      filteredItems.sort((a, b) => b.rating - a.rating);
+    }
+
     setFilteredMenuItems(filteredItems);
-  }, [menuItems, searchText, isVeg, sortOrder]);
+  }, [menuItems, searchText, isVeg, sortOrder, ratingSortOrder]);
 
   const handleSortChange = (e) => {
     setSortOrder(e.target.value);
+  };
+
+  const handleRatingSortChange = (e) => {
+    setRatingSortOrder(e.target.value);
   };
 
   return (
@@ -50,7 +61,7 @@ const MenuList = ({ vendor_id, searchText }) => {
       <div className="my-2 mx-auto">
         <button
           className={`mx-4 py-2 px-4 rounded-lg ${
-            isVeg
+            !isVeg
               ? "bg-black text-white"
               : "bg-white text-black border border-black"
           }`}
@@ -61,7 +72,7 @@ const MenuList = ({ vendor_id, searchText }) => {
 
         <button
           className={`mx-4 py-2 px-4 rounded-lg ${
-            !isVeg
+            isVeg
               ? "bg-black text-white"
               : "bg-white text-black border border-black"
           }`}
@@ -74,8 +85,17 @@ const MenuList = ({ vendor_id, searchText }) => {
           onChange={handleSortChange}
           className="mx-4 py-2 px-4 rounded-lg bg-white text-black border border-black"
         >
-          <option value="lowToHigh">Low to High</option>
-          <option value="highToLow">High to Low</option>
+          <option value="lowToHigh">Price: Low to High</option>
+          <option value="highToLow">Price: High to Low</option>
+        </select>
+
+        <select
+          value={ratingSortOrder}
+          onChange={handleRatingSortChange}
+          className="mx-4 py-2 px-4 rounded-lg bg-white text-black border border-black"
+        >
+          <option value="lowToHigh">Rating: Low to High</option>
+          <option value="highToLow">Rating: High to Low</option>
         </select>
       </div>
       {filteredMenuItems.map((item) => (

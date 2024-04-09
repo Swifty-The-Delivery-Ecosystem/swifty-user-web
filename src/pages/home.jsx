@@ -22,6 +22,8 @@ const Home = () => {
   const navigate = useNavigate();
   const { selectedLocation, setSelectedLocation } = useSetlocation();
   const { userData } = useProfile();
+  const [showVegetarian, setShowVegetarian] = useState(false);
+  const [showNonVegetarian, setShowNonVegetarian] = useState(false);
 
   const tags = [
     {
@@ -89,7 +91,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    userData && console.log(userData._id);
     let token = localStorage.getItem("token");
     token &&
       userData &&
@@ -105,7 +106,6 @@ const Home = () => {
       )
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setRecommendations(data.recommendedItems);
         })
         .catch((error) => console.error("Error fetching data:", error));
@@ -130,6 +130,24 @@ const Home = () => {
       .catch((error) => console.error("Error fetching data:", error));
   };
 
+  const filteredRestaurants = restaurants.filter((restaurant) => {
+    if (showVegetarian && showNonVegetarian) return true; // Show all restaurants
+    if (showVegetarian) return restaurant.is_veg === true;
+    if (showNonVegetarian) return restaurant.is_veg === false;
+    return true; // Show all restaurants if no filter applied
+  });
+  const [sortBy, setSortBy] = useState(null);
+
+  // Sorting logic based on selected option
+  const sortedRestaurants = filteredRestaurants.slice().sort((a, b) => {
+    if (sortBy === "lowToHigh") {
+      return a.ratings - b.ratings;
+    } else if (sortBy === "highToLow") {
+      return b.ratings - a.ratings;
+    } else {
+      return 0; // No sorting
+    }
+  });
   return (
     <div className="mb-4 md:mx-16 mx-0">
       <div>
@@ -153,12 +171,50 @@ const Home = () => {
         <div className="md:text-3xl text-xl mx-8 my-6 font-extrabold font-roboto">
           Restaurants near you
         </div>
+        <div className="flex justify-center my-4">
+          <button
+            className={`mx-4 py-2 px-4 rounded-lg ${
+              showVegetarian
+                ? "bg-black text-white"
+                : "bg-white text-black border border-black"
+            }`}
+            onClick={() => {
+              setShowVegetarian(true);
+              setShowNonVegetarian(false);
+            }}
+          >
+            Veg
+          </button>
+          {/* Button for Non Vegetarian */}
+          <button
+            className={`mx-4 py-2 px-4 rounded-lg ${
+              showNonVegetarian
+                ? "bg-black text-white"
+                : "bg-white text-black border border-black"
+            }`}
+            onClick={() => {
+              setShowVegetarian(false);
+              setShowNonVegetarian(true);
+            }}
+          >
+            Non Veg
+          </button>
+          <select
+            className="mx-4 p-2 rounded-md"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="">Sort by</option>
+            <option value="lowToHigh">Rating: Low to High</option>
+            <option value="highToLow">Rating: High to Low</option>
+          </select>
+        </div>
         <ul
           className="mx-8 my-8 flex gap-8 overflow-y-hidden relative"
           ref={ref}
         >
-          {restaurants.length !== 0 ? (
-            restaurants.map((restaurant, index) => (
+          {sortedRestaurants.length !== 0 ? (
+            sortedRestaurants.map((restaurant, index) => (
               <li
                 onClick={() => {
                   navigate("/restaurant", {

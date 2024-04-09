@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Typography } from "@material-tailwind/react";
 import { useCart } from "../context/cartcontext";
 import ReactStars from "react-rating-stars-component";
+import star from "../assets/images/star.png";
 
 const MenuItem = ({ item }) => {
   const { cartItems, increaseQuantity, decreaseQuantity } = useCart();
@@ -10,7 +11,6 @@ const MenuItem = ({ item }) => {
       cartItems.find((cartItem) => cartItem.id === item.item_id)?.quantity) ||
       0
   );
-  console.log(item);
 
   useEffect(() => {
     if (cartItems) {
@@ -24,6 +24,10 @@ const MenuItem = ({ item }) => {
       }
     }
   }, [item, cartItems]);
+
+  if (!item.rating) {
+    item.rating = 3;
+  }
 
   return (
     <Card className="my-5 mx-10 shadow-none">
@@ -49,18 +53,11 @@ const MenuItem = ({ item }) => {
             <h3 className="text-lg font-semibold">{item.name}</h3>
           </div>
           <h3 className="text-lg font-medium">₹ {item.price}</h3>
-          <ReactStars
-            count={5}
-            // onChange={ratingChanged}
-            isHalf={true}
-            emptyIcon={<i className="far fa-star"></i>}
-            halfIcon={<i className="fa fa-star-half-alt"></i>}
-            fullIcon={<i className="fa fa-star"></i>}
-            activeColor="#ffd700"
-            value={Math.random() * 5}
-            edit={false}
-            size={24}
-          />
+          <div className="flex gap-2">
+            <img src={star} className="w-6 h-6" />
+            <h3 className="text-lg font-medium"> {item.rating}</h3>
+          </div>
+
           <p className="text-gray-500 text-wrap text-sm">
             {item.description.length > 32
               ? `${item.description.slice(0, 28)}...`

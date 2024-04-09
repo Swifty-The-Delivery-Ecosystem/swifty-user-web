@@ -10,6 +10,8 @@ import { useCart } from "../context/cartcontext";
 import { useSetlocation } from "../context/locationContext";
 import { useProfile } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
+import { useRestaurant } from "../context/restaurant_details";
+// import { useSetlocation } from "../context/locationContext";
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -22,6 +24,7 @@ const Navbar = () => {
   const [authenticated, setAuthenticated] = useState(
     window.location.pathname !== "/login" || "/register"
   );
+  const { fetchRestaurant } = useRestaurant();
 
   const toggleDropdown = () => {
     setDropdownVisible(!isDropdownVisible);
@@ -133,7 +136,9 @@ const Navbar = () => {
               options={locations}
               searchable
               onChange={(value) => {
+                console.log(value);
                 setSelectedLocation(value);
+                fetchRestaurant(value.value);
               }}
               labels={{
                 notSelected: `${selectedLocation.label}`,

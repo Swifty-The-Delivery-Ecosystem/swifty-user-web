@@ -138,14 +138,13 @@ const Home = () => {
   });
   const [sortBy, setSortBy] = useState(null);
 
-  // Sorting logic based on selected option
   const sortedRestaurants = filteredRestaurants.slice().sort((a, b) => {
     if (sortBy === "lowToHigh") {
       return a.ratings - b.ratings;
     } else if (sortBy === "highToLow") {
       return b.ratings - a.ratings;
     } else {
-      return 0; // No sorting
+      return 0;
     }
   });
   return (

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useCart } from "./cartcontext";
+import { useSetlocation } from "./locationContext";
 
 const RestaurantContext = createContext();
 
@@ -10,17 +11,11 @@ export const useRestaurant = () => {
 
 export const RestaurantProvider = ({ children }) => {
   const { cartItems } = useCart();
+  const selectedLocation = useSetlocation();
   const [details, setdetails] = useState();
   const [restaurants, setRestaurants] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
 
-  const contextValue = {
-    details,
-    restaurants,
-    setRestaurants,
-    recommendations,
-    setRecommendations,
-  };
   const fetchRestaurantDetails = async () => {
     try {
       if (cartItems) {
@@ -37,11 +32,49 @@ export const RestaurantProvider = ({ children }) => {
     }
   };
 
+  const fetchRestaurant = async (loc) => {
+    try {
+      if (selectedLocation) {
+        console.log("heloo");
+        fetch(
+          `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?location=${loc}`,
+          {
+            method: "get",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            // Repeat the restaurants 10 times
+            const repeatedRestaurants = Array.from(
+              { length: 4 },
+              () => data
+            ).flat();
+            setRestaurants(repeatedRestaurants);
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (cartItems) {
       fetchRestaurantDetails();
     }
   }, [cartItems]);
+
+  const contextValue = {
+    details,
+    restaurants,
+    setRestaurants,
+    recommendations,
+    setRecommendations,
+    fetchRestaurant,
+  };
   return (
     <RestaurantContext.Provider value={contextValue}>
       {children}

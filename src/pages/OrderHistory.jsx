@@ -8,12 +8,12 @@ import { ToastContainer } from "react-toastify";
 const OrderHistory = () => {
   const orders = useOrderHistory();
   const locations = [
-    { label: "BH1", value: 1 },
-    { label: "BH2", value: 2 },
-    { label: "GH1", value: 3 },
-    { label: "GH2", value: 4 },
+    { label: "Kanhar", value: 1 },
+    { label: "Indravati", value: 2 },
+    { label: "MSH", value: 3 },
+    { label: "Mess Block", value: 4 },
+    { label: "Delta", value: 5 },
   ];
-
   const [ratings, setRatings] = useState({});
   const [ratingsSubmitted, setRatingsSubmitted] = useState({});
 
@@ -133,7 +133,7 @@ const OrderHistory = () => {
                       <div className="md:text-2xl text-lg font-bold">
                         {order.vendor_name}
                       </div>
-                      <div>{locations[order.user_location - 1].label}</div>
+                      <div>{locations[order.user_location - 1]?.label}</div>
                     </div>
                     <div>
                       <div className="bg-green-400 text-white px-2 md:text-lg text-sm py-2 font-medium uppercase">

@@ -18,7 +18,7 @@ export const RestaurantProvider = ({ children }) => {
 
   const fetchRestaurantDetails = async () => {
     try {
-      if (cartItems) {
+      if (cartItems && cartItems[0]["restaurant_id"]) {
         const rid = String(cartItems[0]["restaurant_id"]);
 
         const response = await axios.get(

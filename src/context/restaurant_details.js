@@ -34,29 +34,30 @@ export const RestaurantProvider = ({ children }) => {
 
   const fetchRestaurant = async (loc) => {
     try {
-      if (selectedLocation) {
-        console.log("heloo");
-        fetch(
-          `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?location=${loc}`,
-          {
-            method: "get",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            // Repeat the restaurants 10 times
-            const repeatedRestaurants = Array.from(
-              { length: 4 },
-              () => data
-            ).flat();
-            setRestaurants(repeatedRestaurants);
-          })
-          .catch((error) => console.error("Error fetching data:", error));
-      }
+      // if (selectedLocation) {
+      console.log("heloo");
+      fetch(
+        `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?primary_location=${loc}`,
+        {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          // Repeat the restaurants 10 times
+          const repeatedRestaurants = Array.from(
+            { length: 4 },
+            () => data
+          ).flat();
+          console.log(data);
+          setRestaurants(repeatedRestaurants);
+        })
+        .catch((error) => console.error("Error fetching data:", error));
     } catch (error) {
+      // }
       console.error(error);
     }
   };

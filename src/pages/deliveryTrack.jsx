@@ -107,12 +107,20 @@ const DeliveryTrack = () => {
           <div className="border-b-2 px-4 ">
             <div className="flex mt-4 justify-between">
               <div className="font-extralight text-gray-600">Item Total</div>
-              <div className="font-extralight text-gray-600">₹ {cartPrice}</div>
+              <div className="font-extralight text-gray-600">
+                ₹ {cartPrice - (cartPrice * 0.05 + 5).toFixed(2)}
+              </div>
             </div>
             <div className="flex mb-4 mt-4 justify-between">
               <div className="font-extralight text-gray-600">Delivery Fee</div>
               <div className="font-extralight text-gray-600">
-                ₹ {cartPrice === 0 ? 0 : (cartPrice * 0.05).toFixed(2)}
+                ₹{" "}
+                {cartPrice === 0
+                  ? 0
+                  : (
+                      (cartPrice -
+                      (cartPrice * 0.05 + 5).toFixed(2)) * 0.05
+                    ).toFixed(2)}
               </div>
             </div>
           </div>
@@ -124,10 +132,7 @@ const DeliveryTrack = () => {
         <div className="flex mb-4 mt-4 justify-between">
           <div className="font-bold text-xl ">Total Amount</div>
           <div className="font-bold text-xl">
-            ₹{" "}
-            {cartPrice === 0
-              ? 0
-              : (cartPrice + cartPrice * 0.05 + 5).toFixed(2)}
+            ₹ {cartPrice === 0 ? 0 : cartPrice}
           </div>
         </div>
       </div>

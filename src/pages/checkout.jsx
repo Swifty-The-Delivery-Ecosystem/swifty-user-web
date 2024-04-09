@@ -310,7 +310,15 @@ function Checkout() {
                     +
                   </button>
                 </div>
-                <div>₹ {item.price}</div>
+                <h3 className="text-xl font-medium">
+                  {item.on_offer ? (
+                    <span className="text-lg mx-1">
+                      ₹ {item.offer_price}
+                    </span>
+                  ) : (
+                    `₹${item.price}`
+                  )}
+                </h3>
               </div>
             </div>
           ))}

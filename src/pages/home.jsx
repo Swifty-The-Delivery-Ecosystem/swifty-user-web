@@ -369,9 +369,20 @@ const Home = () => {
                       <div className="md:text-xl text-lg font-bold">
                         {food.name}
                       </div>
-                      <div className="text-[16px] font-bold  items-center">
-                        ₹ {food.price}
-                      </div>
+                      <h3 className="text-xl font-medium">
+                        {food.on_offer ? (
+                          <>
+                            <span className="line-through text-lg text-gray-500">
+                              ₹ {food.price}
+                            </span>
+                            <span className="text-xl mx-1 text-red-500">
+                              ₹ {food.offer_price}
+                            </span>
+                          </>
+                        ) : (
+                          `₹${food.price}`
+                        )}
+                      </h3>
                       <div className="text-[14px] text-gray-600 font-medium mb-1">
                         {food.tags.slice(0, 4).join(" ,")}
                       </div>

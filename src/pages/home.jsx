@@ -174,7 +174,7 @@ const Home = () => {
           <button
             className={`mx-4 py-2 px-4 rounded-lg ${
               showVegetarian
-                ? "bg-black text-white"
+                ? "bg-purple-500 text-white"
                 : "bg-white text-black border border-black"
             }`}
             onClick={() => {
@@ -188,7 +188,7 @@ const Home = () => {
           <button
             className={`mx-4 py-2 px-4 rounded-lg ${
               showNonVegetarian
-                ? "bg-black text-white"
+                ? "bg-purple-500 text-white"
                 : "bg-white text-black border border-black"
             }`}
             onClick={() => {
@@ -221,19 +221,19 @@ const Home = () => {
                   });
                 }}
                 key={index}
-                className="rounded-xl hover:cursor-pointer items-center"
+                className="bg-gray-100 inline-block flex-none w-250 rounded-xl hover:cursor-pointer items-center"
               >
                 <img
                   src={restaurant.images[0]}
                   alt={restaurant.restaurantName}
-                  className="w-80 h-40 object-cover rounded-xl mb-2"
+                  className="w-full h-36 object-cover rounded-xl mb-2"
                 />
-                <div className="text-left">
-                  <div className="md:text-xl text-lg font-bold">
+                <div className="text-left px-2">
+                  <div className="md:text-xl text-lg font-bold mb-2">
                     {restaurant.restaurantName}
                   </div>
-                  <div className="text-[16px] flex gap-2 items-center text-gray-500">
-                    <img src={star} alt="" className="w-6 h-6" />{" "}
+                  <div className="text-[14px] flex gap-2 items-center text-gray-500 mb-1">
+                    <img src={star} alt="" className="w-5 h-5" />{" "}
                     {restaurant.ratings}
                   </div>
                   <div className="text-[14px] text-gray-600 font-medium mb-1">
@@ -252,9 +252,11 @@ const Home = () => {
           )}
         </ul>
 
-        <div className="md:text-3xl text-xl mx-8 my-6 font-extrabold font-roboto">
+      
+        <div className="md:text-3xl text-xl mx-8 my-6  font-extrabold font-roboto">
           What's on your mind?
         </div>
+       
         <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
           {restaurants && restaurants.length !== 0 ? (
             tags.map((tag, index) => (

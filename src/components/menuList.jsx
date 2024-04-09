@@ -57,7 +57,7 @@ const MenuList = ({ vendor_id, searchText }) => {
   };
 
   return (
-    <div className="mx-auto min-h-screen md:items-center">
+    <div className="flex flex-col items-center min-h-screen">
       <div className="my-2 mx-auto">
         <button
           className={`mx-4 py-2 px-4 rounded-lg ${

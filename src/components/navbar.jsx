@@ -230,9 +230,9 @@ const Navbar = () => {
               className="text-lg font-bold cursor-pointer"
             >
               <img
-                src="https://raw.githubusercontent.com/Aditya062003/Ecommerce-Site-Care-Leisure/main/assets/images/users/3.jpg"
+                src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png"
                 alt=""
-                className="w-16 h-16 rounded-full object-cover"
+                className="w-11 h-11 rounded-full object-cover"
               />
             </div>
             {isDropdownVisible && (

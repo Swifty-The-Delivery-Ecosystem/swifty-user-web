@@ -22,6 +22,9 @@ const Home = () => {
   const navigate = useNavigate();
   const { selectedLocation, setSelectedLocation } = useSetlocation();
   const { userData } = useProfile();
+  const [showVegetarian, setShowVegetarian] = useState(false);
+  const [showNonVegetarian, setShowNonVegetarian] = useState(false);
+  const [offerItems, setofferItems] = useState([]);
 
   const tags = [
     {
@@ -68,7 +71,24 @@ const Home = () => {
 
   useEffect(() => {
     fetch(
-      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?location=${selectedLocation.value}`,
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/getOfferItems`,
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setofferItems(data.menuItems);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
+    fetch(
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?primary_location=${selectedLocation.value}`,
       {
         method: "get",
         headers: {
@@ -89,7 +109,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    userData && console.log(userData._id);
     let token = localStorage.getItem("token");
     token &&
       userData &&
@@ -105,9 +124,7 @@ const Home = () => {
       )
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setRecommendations(data.recommendedItems);
-          console.log(recommendations);
         })
         .catch((error) => console.error("Error fetching data:", error));
   }, [userData]);
@@ -131,6 +148,23 @@ const Home = () => {
       .catch((error) => console.error("Error fetching data:", error));
   };
 
+  const filteredRestaurants = restaurants.filter((restaurant) => {
+    if (showVegetarian && showNonVegetarian) return true; // Show all restaurants
+    if (showVegetarian) return restaurant.is_veg === true;
+    if (showNonVegetarian) return restaurant.is_veg === false;
+    return true; // Show all restaurants if no filter applied
+  });
+  const [sortBy, setSortBy] = useState(null);
+
+  const sortedRestaurants = filteredRestaurants.slice().sort((a, b) => {
+    if (sortBy === "lowToHigh") {
+      return a.ratings - b.ratings;
+    } else if (sortBy === "highToLow") {
+      return b.ratings - a.ratings;
+    } else {
+      return 0;
+    }
+  });
   return (
     <div className="mb-4 md:mx-16 mx-0">
       <div>
@@ -154,51 +188,132 @@ const Home = () => {
         <div className="md:text-3xl text-xl mx-8 my-6 font-extrabold font-roboto">
           Restaurants near you
         </div>
-        <ul
-          className="mx-8 my-8 flex gap-8 overflow-y-hidden relative"
+        <div className="flex justify-center my-4">
+          <button
+            className={`mx-4 py-2 px-4 rounded-lg ${
+              showVegetarian
+                ? "bg-purple-500 text-white"
+                : "bg-white text-black border border-black"
+            }`}
+            onClick={() => {
+              setShowVegetarian(!showVegetarian);
+            }}
+          >
+            Pure Veg
+          </button>
+          <select
+            className="mx-4 p-2 rounded-md"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="">Sort by</option>
+            <option value="lowToHigh">Rating: Low to High</option>
+            <option value="highToLow">Rating: High to Low</option>
+          </select>
+        </div>
+        <div
+          className="mx-8 my-8 overflow-y-hidden flex gap-10 relative"
           ref={ref}
         >
-          {restaurants.length !== 0 ? (
-            restaurants.map((restaurant, index) => (
-              <li
+          {sortedRestaurants.length !== 0 ? (
+            sortedRestaurants.map((restaurant, index) => (
+              <div
                 onClick={() => {
                   navigate("/restaurant", {
                     state: { restaurant: restaurant },
                   });
                 }}
                 key={index}
-                className="rounded-xl hover:cursor-pointer items-center"
+                className="inline-block text-center  flex-none rounded-xl hover:cursor-pointer items-center"
               >
                 <img
                   src={restaurant.images[0]}
                   alt={restaurant.restaurantName}
-                  className="w-80 h-40 object-cover rounded-xl mb-2"
+                  className="w-[20rem] h-[13rem] object-cover rounded-xl mb-2"
                 />
-                <div className="text-left">
-                  <div className="md:text-xl text-lg font-bold">
+                <div className="text-left px-2">
+                  <div className="md:text-2xl text-lg font-medium mb-2">
                     {restaurant.restaurantName}
                   </div>
-                  <div className="text-[16px] flex gap-2 items-center text-gray-500">
-                    <img src={star} alt="" className="w-6 h-6" />{" "}
-                    {restaurant.ratings}
+                  <div className="text-xl font-bold flex gap-2 items-center text-gray-900 mb-1">
+                    <img src={star} alt="" className="w-8 h-8" />{" "}
+                    {restaurant.ratings?.toFixed(1)}
                   </div>
-                  <div className="text-[14px] text-gray-600 font-medium mb-1">
+                  <div className="text-lg text-gray-600 font-medium mb-1">
                     {restaurant.tags.slice(0, 4).join(" ,")}
                   </div>
-                  <div className="text-[14px] text-gray-600 font-medium mb-1">
+                  <div className="text-lg text-gray-600 font-medium mb-1">
                     {restaurant.description.length > 28
                       ? `${restaurant.description.slice(0, 28)}...`
                       : restaurant.description}
                   </div>
                 </div>
-              </li>
+              </div>
             ))
+          ) : (
+            <ShimmerSimpleGallery row={1} card imageHeight={200} />
+          )}
+        </div>
+        <div className="md:text-3xl text-xl mx-8 my-6  font-extrabold font-roboto">
+          Best Offers For You
+        </div>
+        <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>
+          {offerItems && offerItems.length !== 0 ? (
+            offerItems.map((food, index) => {
+              const restaurant = restaurants.find(
+                (restaurant) => restaurant._id === food.vendor_id
+              );
+              return (
+                <li
+                  onClick={() => {
+                    navigate("/restaurant", {
+                      state: { restaurant: restaurant },
+                    });
+                  }}
+                  key={index}
+                  className="rounded-xl hover:cursor-pointer items-center"
+                >
+                  <img
+                    src={food.image_url}
+                    alt={food.name}
+                    className="w-80 h-40 object-cover rounded-xl mb-2"
+                  />
+                  <div className="text-left">
+                    <div className="md:text-xl text-lg font-bold">
+                      {food.name}
+                    </div>
+                    <h3 className="text-xl font-medium">
+                      {food.on_offer ? (
+                        <>
+                          <span className="line-through text-lg text-gray-500">
+                            ₹ {food.price}
+                          </span>
+                          <span className="text-xl mx-1 text-red-500">
+                            ₹ {food.offer_price}
+                          </span>
+                        </>
+                      ) : (
+                        `₹${food.price}`
+                      )}
+                    </h3>
+                    <div className="text-[14px] text-gray-600 font-medium mb-1">
+                      {food.tags.slice(0, 4).join(" ,")}
+                    </div>
+                    <div className="text-[14px] text-gray-600 font-medium mb-1">
+                      {food.description.length > 28
+                        ? `${food.description.slice(0, 28)}...`
+                        : food.description}
+                    </div>
+                  </div>
+                </li>
+              );
+            })
           ) : (
             <ShimmerSimpleGallery card imageHeight={200} caption />
           )}
         </ul>
 
-        <div className="md:text-3xl text-xl mx-8 my-6 font-extrabold font-roboto">
+        <div className="md:text-3xl text-xl mx-8 my-6  font-extrabold font-roboto">
           What's on your mind?
         </div>
         <ul className="mx-8 my-8 flex gap-8 relative" ref={ref}>

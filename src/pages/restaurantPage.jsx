@@ -10,22 +10,26 @@ function RestaurantScreen() {
   const { cartItems } = useCart();
   const [searchText, setSearchText] = useState("");
 
-
   const restaurant = location.state.restaurant;
 
   return (
-    <div className="md:content-center mx-1 md:mx-auto">
+    <div className="md:content-center mx-1 my-2 md:mx-auto">
       <div className="flex bg-white mx-auto shadow-lg md:w-1/2 justify-between rounded-xl gap-6 px-8 py-4 items-start">
         <div>
-          <img className="h-40 object-cover" src={restaurant.images[0]} alt="" />
+          <img
+            className="h-40 object-cover"
+            src={restaurant.images[0]}
+            alt=""
+          />
         </div>
         <div className="flex flex-col">
-          <div className="mt-6 md:text-xl py-2 text-lg font-bold">
+          <div className="mt-6 md:text-2xl py-2 text-lg font-medium">
             {restaurant.restaurantName}
           </div>
           <div className="flex items-center py-2 gap-2">
-            <img src={star} alt="" className="w-6 h-6" /> {restaurant.ratings} |{" "}
-            {restaurant.number_of_rating}+ ratings
+            <img src={star} alt="" className="w-6 h-6" />{" "}
+            {restaurant.ratings?.toFixed(1)} | {restaurant.number_of_rating}+
+            ratings
           </div>
           <div className="md:text-lg text-sm font-medium">
             {restaurant.description}
@@ -34,13 +38,13 @@ function RestaurantScreen() {
       </div>
 
       <div className="md:content-center md:mx-auto">
-      <input
+        <input
           type="text"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           name="Search"
           id="Search"
-          class="bg-gray-50 w-[60%] mt-10 mx-auto border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block p-2.5"
+          class="bg-gray-50 w-[50%] mt-10 mx-auto border hover:border-orange-500 text-gray-900 sm:text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block p-2.5"
           placeholder="Search"
           required=""
         />

@@ -13,10 +13,13 @@ import OrderHistory from "./pages/OrderHistory";
 import UpdateProfile from "./pages/updateProfile";
 import { UserProvider } from "./context/userContext";
 import Search from "./pages/search";
+import { ToastContainer } from "react-toastify";
+
 
 function App() {
   return (
     <UserProvider>
+      <ToastContainer />
       <BrowserRouter>
         <Navbar />
         <Routes>

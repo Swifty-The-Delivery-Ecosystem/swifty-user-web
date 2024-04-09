@@ -33,7 +33,6 @@ export const OrderHistoryProvider = ({ children }) => {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log(1);
         setOrders(data.orders);
       })
       .catch((error) => console.error("Error fetching current user:", error));

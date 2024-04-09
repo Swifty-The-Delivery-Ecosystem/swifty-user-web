@@ -236,7 +236,6 @@ function Checkout() {
             `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/getitem?cartItems=${cartItemsString}`
           );
           setItemDetails(response.data["finalitems"]);
-          console.log(response.data["finalitems"]);
         } catch (error) {
           console.error("Error fetching item details:", error);
         }
@@ -253,7 +252,7 @@ function Checkout() {
         <div className="flex justify-start gap-6 px-8 py-4 items-start">
           <div>
             <img
-              className="w-80 object-cover h-32 md:h-40"
+              className="w-[20rem] object-cover h-32 md:h-40"
               src={details.images[0]}
               alt=""
             />
@@ -284,7 +283,7 @@ function Checkout() {
               <div className="flex items-center gap-2">
                 <img
                   src={
-                    item.is_veg 
+                    !item.is_veg
                       ? "https://i.pngimg.me/thumb/f/720/m2i8b1A0m2m2Z5Z5.jpg"
                       : "https://spng.pinpng.com/pngs/s/45-459786_non-veg-icon-circle-hd-png-download.png"
                   }
@@ -341,21 +340,29 @@ function Checkout() {
           ₹ {(cartPrice + cartPrice * 0.05 + 5).toFixed(2)}
         </div>
       </div>
-      {details && userData && amount && cartItems && selectedLocation ? (
-        <div>
-          <div
-            className="text-center bg-green-500 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600"
-            onClick={handleCheckout}
-          >
-            CheckOut
+      {cartPrice >= 100 ? (
+        details && userData && amount && cartItems && selectedLocation ? (
+          <div>
+            <div
+              className="text-center bg-green-500 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer hover:bg-green-600"
+              onClick={handleCheckout}
+            >
+              CheckOut
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>
+            <div className="text-center bg-green-300 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer">
+              {localStorage.getItem("token")
+                ? "CheckOut"
+                : "Please Login To CheckOut"}
+            </div>
+          </div>
+        )
       ) : (
         <div>
           <div className="text-center bg-green-300 my-6 w-1/2 mx-auto py-3 text-white font-semibold text-xl hover:cursor-pointer">
-            {localStorage.getItem("token")
-              ? "CheckOut"
-              : "Please Login To CheckOut"}
+            Minimum Cart Value Should be ₹100
           </div>
         </div>
       )}

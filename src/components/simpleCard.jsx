@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography } from "@material-tailwind/react";
 import { useCart } from "../context/cartcontext";
+import ReactStars from "react-rating-stars-component";
+import star from "../assets/images/star.png";
 
 const MenuItem = ({ item }) => {
   const { cartItems, increaseQuantity, decreaseQuantity } = useCart();
@@ -17,45 +19,90 @@ const MenuItem = ({ item }) => {
       );
       if (cartItem) {
         setQuantity(cartItem.quantity);
-      }
-      else{
+      } else {
         setQuantity(0);
       }
     }
   }, [item, cartItems]);
 
+  if (!item.rating) {
+    item.rating = "No Ratings";
+  }
+
   return (
     <Card className="my-5 mx-10 shadow-none">
-      <div className="md:flex justify-between items-center p-4 md:border-b">
-        <div className="flex-shrink-0 mx-4">
+      <div className="md:grid grid-cols-3 text-center  justify-between items-center p-4 md:border-b">
+        <div className="flex-shrink-0 mx-4 col-span-1/4">
           <img
             src={item.image_url}
-            className="w-full h-40 rounded-md"
+            className="w-[20rem] h-[14rem] object-fill rounded-md"
             alt={item.name}
           />
         </div>
         <div className="flex-grow px-4 mx-4 text-start">
-          <h3 className="text-lg font-semibold">{item.name}</h3>
-          <p className="text-gray-500 text-wrap text-sm">{item.description}</p>
+          <div className="flex gap-2">
+            <img
+              src={
+                !item.is_veg
+                  ? "https://i.pngimg.me/thumb/f/720/m2i8b1A0m2m2Z5Z5.jpg"
+                  : "https://spng.pinpng.com/pngs/s/45-459786_non-veg-icon-circle-hd-png-download.png"
+              }
+              alt="type symbol"
+              className="w-6 h-6"
+            />
+            <h3 className="text-2xl font-semibold">{item.name}</h3>
+          </div>
+          <h3 className="text-xl font-medium">
+            {item.on_offer ? (
+              <>
+                <span className="line-through text-lg text-gray-500">
+                  ₹ {item.price}
+                </span>
+                <span className="text-xl mx-1 text-red-500">
+                  ₹ {item.offer_price}
+                </span>
+              </>
+            ) : (
+              `₹${item.price}`
+            )}
+          </h3>
+
+          <div className="flex gap-2">
+            <img src={star} className="w-6 h-6" />
+            <h3 className="text-xl font-medium">
+              {" "}
+              {item.rating != "No Ratings"
+                ? item.rating?.toFixed(1)
+                : "No Ratings"}
+            </h3>
+          </div>
+
+          <p className="text-gray-500 text-wrap text-lg">
+            {item.description.length > 32
+              ? `${item.description.slice(0, 28)}...`
+              : item.description}
+          </p>
         </div>
-        <Card className="flex-shrink-0 text-center bg-white rounded-md p-2">
+        <Card className="flex-shrink-0 w-fit text-center mx-auto bg-white rounded-md p-2">
           <div className="flex text-center items-center border-purple-500">
             {quantity !== 0 && (
               <>
                 <button
                   onClick={() => {
-                      decreaseQuantity(item);
+                    decreaseQuantity(item);
                   }}
-                  className="text-slate-200 text-center font-bold px-2"
+                  className="text-purple-500 text-center font-extrabold px-2"
                 >
                   -
                 </button>
-                <div className="px-2 text-center text-purple-500 font-bold">{quantity}</div>
+                <div className="px-2 text-center text-purple-500 font-bold">
+                  {quantity}
+                </div>
               </>
             )}
             <button
               onClick={() => {
-                  increaseQuantity(item);
+                increaseQuantity(item);
               }}
               className="text-purple-500 text-center font-bold px-2"
             >

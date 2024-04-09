@@ -10,6 +10,8 @@ import { useCart } from "../context/cartcontext";
 import { useSetlocation } from "../context/locationContext";
 import { useProfile } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
+import { useRestaurant } from "../context/restaurant_details";
+// import { useSetlocation } from "../context/locationContext";
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -22,6 +24,7 @@ const Navbar = () => {
   const [authenticated, setAuthenticated] = useState(
     window.location.pathname !== "/login" || "/register"
   );
+  const { fetchRestaurant } = useRestaurant();
 
   const toggleDropdown = () => {
     setDropdownVisible(!isDropdownVisible);
@@ -32,6 +35,18 @@ const Navbar = () => {
       setDropdownVisible(false);
     }
   };
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setloading(true);
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   if (!loading && userData) {
+  //     setAuthenticated(true); // Set authenticated to true when loading is false and userData exists
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -122,6 +137,7 @@ const Navbar = () => {
               searchable
               onChange={(value) => {
                 setSelectedLocation(value);
+                fetchRestaurant(value.value);
               }}
               labels={{
                 notSelected: `${selectedLocation.label}`,
@@ -181,13 +197,13 @@ const Navbar = () => {
         )}
       </div>
 
-      <div
-        onClick={() => {
-          navigate("/search");
-        }}
-        className="hidden cursor-pointer items-center md:flex space-x-12 menu"
-      >
-        <div className="hidden text-right md:block">
+      <div className="hidden cursor-pointer items-center md:flex space-x-12 menu">
+        <div
+          onClick={() => {
+            navigate("/search");
+          }}
+          className="hidden text-right md:block"
+        >
           <div className="p-2 flex gap-2 items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -213,9 +229,9 @@ const Navbar = () => {
               className="text-lg font-bold cursor-pointer"
             >
               <img
-                src="https://raw.githubusercontent.com/Aditya062003/Ecommerce-Site-Care-Leisure/main/assets/images/users/3.jpg"
+                src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png"
                 alt=""
-                className="w-16 h-16 rounded-full object-cover"
+                className="w-11 h-11 rounded-full object-cover"
               />
             </div>
             {isDropdownVisible && (

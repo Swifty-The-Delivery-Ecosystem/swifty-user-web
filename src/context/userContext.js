@@ -11,12 +11,13 @@ export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [loading, setloading] = useState(false);
   const { selectedLocation, setSelectedLocation } = useSetlocation();
-  const locations = [
-    { label: "BH1", value: 1 },
-    { label: "BH2", value: 2 },
-    { label: "GH1", value: 3 },
-    { label: "GH2", value: 4 },
-  ];
+    const locations = [
+      { label: "Kanhar", value: 1 },
+      { label: "Indravati", value: 2 },
+      { label: "MSH", value: 3 },
+      { label: "Mess Block", value: 4 },
+      { label: "Delta", value: 5 },
+    ];
 
   useEffect(() => {
     const token = localStorage.getItem("token");

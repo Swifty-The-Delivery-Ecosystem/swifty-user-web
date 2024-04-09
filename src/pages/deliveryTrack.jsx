@@ -13,23 +13,24 @@ const DeliveryTrack = () => {
   const order_id = params.get("order_id");
 
   useEffect(() => {
-    fetch(
-      `https://order-service-peach.vercel.app/api/v1/order_service/order?order_id=${order_id}`,
-      {
-        method: "get",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // mode: "no-cors",
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setitems(data.order.items);
-        setcartPrice(data.order.amount);
-        setOrderStatus(data.order.order_status);
-        setDeliveryBoyId(data.order.delivery_boy_id);
-      });
+    order_id &&
+      fetch(
+        `https://order-service-peach.vercel.app/api/v1/order_service/order?order_id=${order_id}`,
+        {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // mode: "no-cors",
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setitems(data.order.items);
+          setcartPrice(data.order.amount);
+          setOrderStatus(data.order.order_status);
+          setDeliveryBoyId(data.order.delivery_boy_id);
+        });
   }, [order_id]);
 
   useEffect(() => {
@@ -47,7 +48,6 @@ const DeliveryTrack = () => {
         .then((response) => response.json())
         .then((data) => {
           setDeliveryBoy(data.data.user);
-          console.log(data.data.user);
         });
   }, [deliveryBoyId]);
 

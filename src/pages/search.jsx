@@ -23,7 +23,7 @@ const Search = () => {
   useEffect(() => {
     if (restaurants.length !== 0) return;
     fetch(
-      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?location=${selectedLocation.value}`,
+      `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/vendors?location=${selectedLocation.value}`,
       {
         method: "get",
         headers: {
@@ -74,8 +74,8 @@ const Search = () => {
       return;
     }
 
-    const itemSearchUrl = `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/searchItem?itemName=${searchTerm}`;
-    const restaurantSearchUrl = `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/searchRestaurant?restaurantName=${searchTerm}`;
+    const itemSearchUrl = `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/searchItem?itemName=${searchTerm}`;
+    const restaurantSearchUrl = `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/searchRestaurant?restaurantName=${searchTerm}`;
 
     Promise.all([
       fetch(itemSearchUrl).then((response) => response.json()),
@@ -133,7 +133,7 @@ const Search = () => {
 
   const handleTagClick = (tag) => {
     fetch(
-      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?location=${selectedLocation.value}&tag=${tag}`,
+      `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/vendors?location=${selectedLocation.value}&tag=${tag}`,
       {
         method: "get",
         headers: {

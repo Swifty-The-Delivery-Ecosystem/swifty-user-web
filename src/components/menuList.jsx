@@ -10,7 +10,7 @@ const MenuList = ({ vendor_id, searchText }) => {
 
   useEffect(() => {
     fetch(
-      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors/${vendor_id}`,
+      `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/vendors/${vendor_id}`,
       {
         method: "get",
         headers: {
@@ -20,29 +20,33 @@ const MenuList = ({ vendor_id, searchText }) => {
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         setMenuItems(data.items);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, [vendor_id]);
 
   useEffect(() => {
-    let filteredItems = menuItems.filter((item) =>
-      item.name.toLowerCase().includes(searchText.toLowerCase())
-    );
+    let filteredItems =
+      menuItems &&
+      menuItems.filter((item) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      );
     if (isVeg) {
-      filteredItems = filteredItems.filter((item) => item.is_veg);
+      filteredItems =
+        filteredItems && filteredItems.filter((item) => item.is_veg);
     }
 
     if (sortOrder === "lowToHigh") {
-      filteredItems.sort((a, b) => a.price - b.price);
+      filteredItems && filteredItems.sort((a, b) => a.price - b.price);
     } else if (sortOrder === "highToLow") {
-      filteredItems.sort((a, b) => b.price - a.price);
+      filteredItems && filteredItems.sort((a, b) => b.price - a.price);
     }
 
     if (ratingSortOrder === "lowToHigh") {
-      filteredItems.sort((a, b) => a.rating - b.rating);
+      filteredItems && filteredItems.sort((a, b) => a.rating - b.rating);
     } else if (ratingSortOrder === "highToLow") {
-      filteredItems.sort((a, b) => b.rating - a.rating);
+      filteredItems && filteredItems.sort((a, b) => b.rating - a.rating);
     }
 
     setFilteredMenuItems(filteredItems);
@@ -98,7 +102,7 @@ const MenuList = ({ vendor_id, searchText }) => {
           <option value="highToLow">Rating: High to Low</option>
         </select>
       </div>
-      {filteredMenuItems.map((item) => (
+      {filteredMenuItems && filteredMenuItems.map((item) => (
         <MenuItem key={item.id} item={item} />
       ))}
     </div>

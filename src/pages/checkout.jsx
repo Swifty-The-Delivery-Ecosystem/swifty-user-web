@@ -233,7 +233,7 @@ function Checkout() {
         try {
           const cartItemsString = JSON.stringify(cartItems);
           const response = await axios.get(
-            `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/getitem?cartItems=${cartItemsString}`
+            `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/getitem?cartItems=${cartItemsString}`
           );
           setItemDetails(response.data["finalitems"]);
         } catch (error) {

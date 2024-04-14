@@ -79,7 +79,7 @@ const Home = () => {
     const channel = ably.channels.get("offers");
     channel.subscribe("newOffer", (message) => {
       // When a new offer is received, show a toast notification
-      console.log("New offer received!", message);
+      console.log("New offer received!", message)
       toast.success("New offer available!", {
         position: "top-right",
         autoClose: 3000,

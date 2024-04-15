@@ -8,16 +8,10 @@ import { ShimmerSimpleGallery } from "react-shimmer-effects";
 import { useSetlocation } from "../context/locationContext";
 import { useProfile } from "../context/userContext";
 import { useRestaurant } from "../context/restaurant_details";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Ably from "ably";
 
 const Home = () => {
-  // const [restaurants, setRestaurants] = useState([]);
   const { restaurants, setRestaurants, recommendations, setRecommendations } =
     useRestaurant();
-  const [restaurantsTag, setRestaurantsTag] = useState([]);
-  // const [recommendations, setRecommendations] = useState([]);
   const ref = useRef(null);
   const { scrollXProgress } = useScroll({ container: ref });
   const navigate = useNavigate();
@@ -69,34 +63,7 @@ const Home = () => {
       url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/v1674029846/PC_Creative%20refresh/3D_bau/banners_new/Coffee.png",
     },
   ];
-  useEffect(() => {
-    // Initialize Ably client
-    const ably = new Ably.Realtime(
-      "hX9Akw.BZVKSg:HVVgnbhR_pFHqjkjM59yeNLbbDiceXG5VIzow8kSUPQ"
-    );
 
-    // Subscribe to the Ably channel for new offer notifications
-    const channel = ably.channels.get("offers");
-    channel.subscribe("newOffer", (message) => {
-      // When a new offer is received, show a toast notification
-      console.log("New offer received!", message)
-      toast.success("New offer available!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    });
-
-    // Cleanup function
-    return () => {
-      // Unsubscribe from Ably channel when component unmounts
-      channel.unsubscribe();
-    };
-  }, []);
   useEffect(() => {
     fetch(
       `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/getOfferItems`,
@@ -131,7 +98,7 @@ const Home = () => {
           { length: 4 },
           () => data
         ).flat();
-        setRestaurants(repeatedRestaurants);
+        setRestaurants(data);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
@@ -177,10 +144,10 @@ const Home = () => {
   };
 
   const filteredRestaurants = restaurants.filter((restaurant) => {
-    if (showVegetarian && showNonVegetarian) return true; // Show all restaurants
+    if (showVegetarian && showNonVegetarian) return true;
     if (showVegetarian) return restaurant.is_veg === true;
     if (showNonVegetarian) return restaurant.is_veg === false;
-    return true; // Show all restaurants if no filter applied
+    return true;
   });
   const [sortBy, setSortBy] = useState(null);
 
@@ -195,7 +162,6 @@ const Home = () => {
   });
   return (
     <div className="mb-4 md:mx-16 mx-0">
-      <ToastContainer />
       <div>
         <div className="bg-gradient-to-r from-purple-300 to-purple-500 px-4 md:rounded-bl-[24rem] md:rounded-tr-[4rem] py-4 bg-opacity-50 flex justify-between">
           <div className="align-middle md:ml-12 md:pl-12 my-auto items-center">
@@ -369,7 +335,6 @@ const Home = () => {
           }}
         />
         <div className="md:text-4xl text-xl mx-8 my-6 font-extrabold loader text-transparent bg-gradient-to-r from-blue-300 via-pink-400 to-blue-400 bg-clip-text font-roboto">
-          {/* <div class="rounded-md border-none  bg-cover bg-no-repeat h-5 animate-loader"></div> */}
           Personalized Recommendations for you
         </div>
         {localStorage.getItem("token") ? (

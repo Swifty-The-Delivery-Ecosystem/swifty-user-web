@@ -5,6 +5,7 @@ const MenuList = ({ vendor_id, searchText }) => {
   const [menuItems, setMenuItems] = useState([]);
   const [filteredMenuItems, setFilteredMenuItems] = useState([]);
   const [isVeg, setIsVeg] = useState(false);
+  const [onOffer, setOnOffer] = useState(false);
   const [sortOrder, setSortOrder] = useState("lowToHigh");
   const [ratingSortOrder, setRatingSortOrder] = useState("highToLow");
 
@@ -34,14 +35,24 @@ const MenuList = ({ vendor_id, searchText }) => {
       );
     if (isVeg) {
       filteredItems =
-        filteredItems && filteredItems.filter((item) => item.is_veg);
+        filteredItems && filteredItems.filter((item) => !item.is_veg);
+    }
+    if (onOffer) {
+      filteredItems =
+        filteredItems && filteredItems.filter((item) => item.on_offer);
+    }
+    if (sortOrder === "lowToHigh") {
+      filteredItems &&
+        filteredItems.sort((a, b) =>
+          a.on_offer ? a.offer_price - b.offer_price : a.price - b.price
+        );
+    } else if (sortOrder === "highToLow") {
+      filteredItems &&
+        filteredItems.sort((a, b) =>
+          b.on_offer ? b.offer_price - a.offer_price : b.price - a.price
+        );
     }
 
-    if (sortOrder === "lowToHigh") {
-      filteredItems && filteredItems.sort((a, b) => a.price - b.price);
-    } else if (sortOrder === "highToLow") {
-      filteredItems && filteredItems.sort((a, b) => b.price - a.price);
-    }
 
     if (ratingSortOrder === "lowToHigh") {
       filteredItems && filteredItems.sort((a, b) => a.rating - b.rating);
@@ -50,7 +61,7 @@ const MenuList = ({ vendor_id, searchText }) => {
     }
 
     setFilteredMenuItems(filteredItems);
-  }, [menuItems, searchText, isVeg, sortOrder, ratingSortOrder]);
+  }, [menuItems, searchText, isVeg, sortOrder, ratingSortOrder, onOffer]);
 
   const handleSortChange = (e) => {
     setSortOrder(e.target.value);
@@ -65,24 +76,23 @@ const MenuList = ({ vendor_id, searchText }) => {
       <div className="my-2 mx-auto">
         <button
           className={`mx-4 py-2 px-4 rounded-lg ${
-            !isVeg
-              ? "bg-black text-white"
-              : "bg-white text-black border border-black"
-          }`}
-          onClick={() => setIsVeg(false)}
-        >
-          Veg
-        </button>
-
-        <button
-          className={`mx-4 py-2 px-4 rounded-lg ${
             isVeg
               ? "bg-black text-white"
               : "bg-white text-black border border-black"
           }`}
-          onClick={() => setIsVeg(true)}
+          onClick={() => setIsVeg(!isVeg)}
         >
-          Non-Veg
+          Pure Veg
+        </button>
+        <button
+          className={`mx-4 py-2 px-4 rounded-lg ${
+            onOffer
+              ? "bg-black text-white"
+              : "bg-white text-black border border-black"
+          }`}
+          onClick={() => setOnOffer(!onOffer)}
+        >
+          On Offer
         </button>
         <select
           value={sortOrder}
@@ -102,9 +112,8 @@ const MenuList = ({ vendor_id, searchText }) => {
           <option value="highToLow">Rating: High to Low</option>
         </select>
       </div>
-      {filteredMenuItems && filteredMenuItems.map((item) => (
-        <MenuItem key={item.id} item={item} />
-      ))}
+      {filteredMenuItems &&
+        filteredMenuItems.map((item) => <MenuItem key={item.id} item={item} />)}
     </div>
   );
 };

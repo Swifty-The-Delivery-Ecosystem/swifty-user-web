@@ -107,128 +107,139 @@ const OrderHistory = () => {
       <ToastContainer />
       <div>
         {orders.orders.length !== 0 ? (
-          orders.orders.map((order) => {
-            const createdAtDate = new Date(order.createdAt);
-            const formattedDate = createdAtDate.toLocaleString("en-GB", {
-              day: "numeric",
-              month: "numeric",
-              year: "numeric",
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            });
+          orders.orders
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .map((order) => {
+              const createdAtDate = new Date(order.createdAt);
+              const formattedDate = createdAtDate.toLocaleString("en-GB", {
+                day: "numeric",
+                month: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              });
 
-            return (
-              <div
-                key={order.order_id}
-                className="bg-white md:w-[40%] md:mx-auto my-4 mx-2 items-center shadow-xl"
-              >
-                <a href={`/track?order_id=${order.order_id}`}>
-                  <div className="flex py-4 px-4 md:py-8 md:px-12 items-center gap-2 md:justify-evenly md:gap-6">
-                    <img
-                      src={order.vendor_image}
-                      alt={order.vendor_name}
-                      className="md:w-[7rem] w-[5rem] h-20 rounded-xl md:h-[7rem] object-cover"
-                    />
-                    <div>
-                      <div className="md:text-2xl text-lg font-bold">
-                        {order.vendor_name}
-                      </div>
-                      <div>{locations[order.user_location - 1]?.label}</div>
-                    </div>
-                    <div>
-                      <div className="bg-green-400 text-white px-2 md:text-lg text-sm py-2 font-medium uppercase">
-                        {order.order_status}
-                      </div>
-                      <div className="md:text-lg text-sm">{formattedDate}</div>
-                    </div>
-                  </div>
-                  <div className="my-2 py-4 px-8 w-full bg-gray-100">
-                    <div>
-                      {order.items.map((item) => (
-                        <div
-                          key={item.item_id}
-                          className="flex justify-between"
-                        >
-                          <div className="font-medium text-lg">{item.name}</div>
-                          <div>x {item.quantity}</div>
+              return (
+                <div
+                  key={order.order_id}
+                  className="bg-white md:w-[40%] md:mx-auto my-4 mx-2 items-center shadow-xl"
+                >
+                  <a href={`/track?order_id=${order.order_id}`}>
+                    <div className="flex py-4 px-4 md:py-8 md:px-12 items-center gap-2 md:justify-evenly md:gap-6">
+                      <img
+                        src={order.vendor_image}
+                        alt={order.vendor_name}
+                        className="md:w-[7rem] w-[5rem] h-20 rounded-xl md:h-[7rem] object-cover"
+                      />
+                      <div>
+                        <div className="md:text-2xl text-lg font-bold">
+                          {order.vendor_name}
                         </div>
-                      ))}
+                        <div>{locations[order.user_location - 1]?.label}</div>
+                      </div>
+                      <div>
+                        <div className="bg-green-400 text-white px-2 md:text-lg text-sm py-2 font-medium uppercase">
+                          {order.order_status}
+                        </div>
+                        <div className="md:text-lg text-sm">
+                          {formattedDate}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between py-2">
-                      <div className="text-lg font-medium">Total Amount :</div>
-                      <div className="font-bold">{order.amount}</div>
-                    </div>
-                  </div>
-                </a>
-                <div className="bg-white p-4">
-                  <div className="text-xl font-semibold">Rate Your Order:</div>
-                  <div className="flex gap-2">
-                    <div className="mx-4 text-gray-600 text-lg">
-                      {order.vendor_name}:
-                    </div>
-                    {[1, 2, 3, 4, 5].map((star) => {
-                      const restaurantRating =
-                        order.rating || ratings[order._id]?.res_rating || 0;
-                      return (
-                        <button
-                          key={star}
-                          onClick={() =>
-                            handleRestaurantRatingChange(order._id, star)
-                          }
-                          className={`text-xl ${
-                            ratingsSubmitted[order.order_id] ||
-                            star <= restaurantRating
-                              ? "text-yellow-500"
-                              : "text-gray-300"
-                          }`}
-                          disabled={
-                            ratingsSubmitted[order.order_id] || restaurantRating
-                          }
-                        >
-                          ★
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <div>
-                    {order.items.map((item) => {
-                      const itemRating =
-                        item.rating || ratings[order._id]?.[item._id] || 0;
-                      const key = `${order.order_id}_${item._id}`;
-                      return (
-                        <div key={item._id} className="flex items-center">
-                          <div className="mx-4 text-gray-600 text-lg">
-                            {item.name}:
+                    <div className="my-2 py-4 px-8 w-full bg-gray-100">
+                      <div>
+                        {order.items.map((item) => (
+                          <div
+                            key={item.item_id}
+                            className="flex justify-between"
+                          >
+                            <div className="font-medium text-lg">
+                              {item.name}
+                            </div>
+                            <div>x {item.quantity}</div>
                           </div>
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <button
-                              key={star}
-                              onClick={() =>
-                                handleItemRatingChange(
-                                  order._id,
-                                  item._id,
-                                  star
-                                )
-                              }
-                              className={`text-xl ${
-                                ratingsSubmitted[key] || star <= itemRating
-                                  ? "text-yellow-500"
-                                  : "text-gray-300"
-                              }`}
-                              disabled={ratingsSubmitted[key] || itemRating}
-                            >
-                              ★
-                            </button>
-                          ))}
+                        ))}
+                      </div>
+                      <div className="flex justify-between py-2">
+                        <div className="text-lg font-medium">
+                          Total Amount :
                         </div>
-                      );
-                    })}
+                        <div className="font-bold">{order.amount}</div>
+                      </div>
+                    </div>
+                  </a>
+                  <div className="bg-white p-4">
+                    <div className="text-xl font-semibold">
+                      Rate Your Order:
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="mx-4 text-gray-600 text-lg">
+                        {order.vendor_name}:
+                      </div>
+                      {[1, 2, 3, 4, 5].map((star) => {
+                        const restaurantRating =
+                          order.rating || ratings[order._id]?.res_rating || 0;
+                        return (
+                          <button
+                            key={star}
+                            onClick={() =>
+                              handleRestaurantRatingChange(order._id, star)
+                            }
+                            className={`text-xl ${
+                              ratingsSubmitted[order.order_id] ||
+                              star <= restaurantRating
+                                ? "text-yellow-500"
+                                : "text-gray-300"
+                            }`}
+                            disabled={
+                              ratingsSubmitted[order.order_id] ||
+                              restaurantRating
+                            }
+                          >
+                            ★
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div>
+                      {order.items.map((item) => {
+                        const itemRating =
+                          item.rating || ratings[order._id]?.[item._id] || 0;
+                        const key = `${order.order_id}_${item._id}`;
+                        return (
+                          <div key={item._id} className="flex items-center">
+                            <div className="mx-4 text-gray-600 text-lg">
+                              {item.name}:
+                            </div>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                onClick={() =>
+                                  handleItemRatingChange(
+                                    order._id,
+                                    item._id,
+                                    star
+                                  )
+                                }
+                                className={`text-xl ${
+                                  ratingsSubmitted[key] || star <= itemRating
+                                    ? "text-yellow-500"
+                                    : "text-gray-300"
+                                }`}
+                                disabled={ratingsSubmitted[key] || itemRating}
+                              >
+                                ★
+                              </button>
+                            ))}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })
         ) : (
           <ShimmerSimpleGallery card imageHeight={200} col={1} />
         )}

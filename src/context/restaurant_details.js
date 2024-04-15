@@ -50,7 +50,7 @@ export const RestaurantProvider = ({ children }) => {
             { length: 4 },
             () => data
           ).flat();
-          setRestaurants(repeatedRestaurants);
+          setRestaurants(data);
         })
         .catch((error) => console.error("Error fetching data:", error));
     } catch (error) {

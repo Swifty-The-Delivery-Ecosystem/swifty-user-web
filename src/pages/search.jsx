@@ -38,8 +38,8 @@ const Search = () => {
           { length: 4 },
           () => data
         ).flat();
-        setRestaurants(repeatedRestaurants);
-        setSearchRestaurant(repeatedRestaurants);
+        setRestaurants(data);
+        setSearchRestaurant(data);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
@@ -301,11 +301,20 @@ const Search = () => {
                     />
                     <div className="text-left">
                       <div className="text-lg font-bold">{food.name}</div>
-                      <div className="text-sm flex gap-2 items-center text-gray-500">
-                        <img src={star} alt="" className="w-4 h-4" />{" "}
-                        {food.ratings}{" "}
-                        {/* Assuming 'ratings' property exists */}
-                      </div>
+                      <h3 className="text-xl font-medium">
+                        {food.on_offer ? (
+                          <>
+                            <span className="line-through text-lg text-gray-500">
+                              ₹ {food.price}
+                            </span>
+                            <span className="text-xl mx-1 text-red-500">
+                              ₹ {food.offer_price}
+                            </span>
+                          </>
+                        ) : (
+                          `₹${food.price}`
+                        )}
+                      </h3>
                       <div className="text-sm text-gray-600 font-medium mb-1">
                         {food.tags.slice(0, 4).join(" ,")}
                       </div>

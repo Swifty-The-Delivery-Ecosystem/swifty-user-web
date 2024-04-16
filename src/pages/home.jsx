@@ -66,7 +66,7 @@ const Home = () => {
 
   useEffect(() => {
     fetch(
-      `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/getOfferItems`,
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/getOfferItems`,
       {
         method: "get",
         headers: {
@@ -83,7 +83,7 @@ const Home = () => {
 
   useEffect(() => {
     fetch(
-      `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/vendors?primary_location=${selectedLocation.value}`,
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?primary_location=${selectedLocation.value}`,
       {
         method: "get",
         headers: {
@@ -126,7 +126,7 @@ const Home = () => {
 
   const handleTagClick = (tag) => {
     fetch(
-      `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/vendors?location=${selectedLocation.value}&tag=${tag}`,
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?location=${selectedLocation.value}&tag=${tag}`,
       {
         method: "get",
         headers: {

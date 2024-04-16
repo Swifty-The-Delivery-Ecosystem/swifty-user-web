@@ -22,7 +22,7 @@ export const RestaurantProvider = ({ children }) => {
         const rid = String(cartItems[0]["restaurant_id"]);
 
         const response = await axios.get(
-          `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/vendors/details/${rid}`
+          `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors/details/${rid}`
         );
 
         setdetails(response.data);
@@ -35,7 +35,7 @@ export const RestaurantProvider = ({ children }) => {
   const fetchRestaurant = async (loc) => {
     try {
       fetch(
-        `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/vendors?primary_location=${loc}`,
+        `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors?primary_location=${loc}`,
         {
           method: "get",
           headers: {

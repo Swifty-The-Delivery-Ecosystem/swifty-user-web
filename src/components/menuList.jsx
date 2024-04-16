@@ -11,7 +11,7 @@ const MenuList = ({ vendor_id, searchText }) => {
 
   useEffect(() => {
     fetch(
-      `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/vendors/${vendor_id}`,
+      `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/vendors/${vendor_id}`,
       {
         method: "get",
         headers: {

@@ -133,7 +133,7 @@ export const CartProvider = ({ children }) => {
       const cartItemsString = JSON.stringify(cartItems);
 
       const response = await axios.get(
-        `https://inventory-service-mqul.onrender.com/api/v1/inventory/customer/cartprice?vendor_id=${cartItems[0]["restaurant_id"]}&cartItems=${cartItemsString}`
+        `https://inventory-service-git-main-swiftyeco.vercel.app/api/v1/inventory/customer/cartprice?vendor_id=${cartItems[0]["restaurant_id"]}&cartItems=${cartItemsString}`
       );
       setCartPrice(response.data.totalPrice);
     } catch (error) {

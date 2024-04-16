@@ -109,48 +109,140 @@ const Navbar = () => {
   ];
   const [searchtext, setsearchtext] = useState("");
 
-  useEffect(() => {
-    if (
-      window.location.pathname !== "/login" ||
-      window.location.pathname !== "/register"
-    ) {
-      const ably = new Ably.Realtime(
-        "hX9Akw.BZVKSg:HVVgnbhR_pFHqjkjM59yeNLbbDiceXG5VIzow8kSUPQ"
-      );
-      const channel = ably.channels.get("offers");
-      channel.subscribe("newOffer", (message) => {
-        console.log("New offer received!", message);
-        toast.success(message.data, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+  const ably = new Ably.Realtime(
+    "hX9Akw.BZVKSg:HVVgnbhR_pFHqjkjM59yeNLbbDiceXG5VIzow8kSUPQ"
+  );
 
-        // Update state with new notification
-        const newNotification = { message: message.data, id: Date.now() };
-        setNotifications((prevNotifications) => [
-          ...prevNotifications,
-          newNotification,
-        ]);
-        setUnreadCount((prevCount) => prevCount + 1);
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      
+      const orderChannel = ably.channels.get("orderstatus");
+
+      orderChannel.subscribe("orderstatus", (message) => {
+        console.log("New order status received!", message);
+        handleNotification(message.data);
       });
 
-      // Load notifications from localStorage
-      const storedNotifications =
-        JSON.parse(localStorage.getItem("notifications")) || [];
-      setNotifications(storedNotifications);
-      setUnreadCount(storedNotifications.length);
-
       return () => {
-        channel.unsubscribe();
+        orderChannel.unsubscribe();
       };
     }
   }, []);
 
+   useEffect(() => {
+     if (localStorage.getItem("token")) {
+       const orderChannel = ably.channels.get("offers");
+
+       orderChannel.subscribe("newOffer", (message) => {
+         console.log("New order status received!", message);
+         handleNotification(message.data);
+       });
+
+       return () => {
+         orderChannel.unsubscribe();
+       };
+     }
+   }, []);
+
+  const handleNotification = (data) => {
+    console.log("New order status received!", data);
+    toast.success(data, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+
+    // Update state with new notification
+    const newNotification = { message: data, id: Date.now() };
+    setNotifications((prevNotifications) => [
+      ...prevNotifications,
+      newNotification,
+    ]);
+
+    const storedNotifications =
+      JSON.parse(localStorage.getItem("notifications")) || [];
+    storedNotifications.push(newNotification);
+    localStorage.setItem("notifications", JSON.stringify(storedNotifications));
+    setUnreadCount((prevCount) => prevCount + 1);
+  };
+
+  // useEffect(() => {
+  //   if (
+  //     window.location.pathname !== "/login" ||
+  //     window.location.pathname !== "/register"
+  //   ) {
+  //     const ably = new Ably.Realtime(
+  //       "hX9Akw.BZVKSg:HVVgnbhR_pFHqjkjM59yeNLbbDiceXG5VIzow8kSUPQ"
+  //     );
+  //     const channel = ably.channels.get("offers");
+  //     channel.subscribe("newOffer", (message) => {
+  //       console.log("New offer received!", message);
+  //       toast.success(message.data, {
+  //         position: "top-right",
+  //         autoClose: 3000,
+  //         hideProgressBar: false,
+  //         closeOnClick: true,
+  //         pauseOnHover: true,
+  //         draggable: true,
+  //         progress: undefined,
+  //       });
+
+  //       // Update state with new notification
+  //       const newNotification = { message: message.data, id: Date.now() };
+  //       setNotifications((prevNotifications) => [
+  //         ...prevNotifications,
+  //         newNotification,
+  //       ]);
+  //       console.log(notifications);
+  //       const storedNotifications =
+  //         JSON.parse(localStorage.getItem("notifications")) || [];
+  //       storedNotifications.push(newNotification);
+  //       localStorage.setItem(
+  //         "notifications",
+  //         JSON.stringify(storedNotifications)
+  //       );
+  //       setUnreadCount((prevCount) => prevCount + 1);
+  //     });
+
+  //     const orderchannel = ably.channels.get("orderstatus");
+  //     orderchannel.subscribe("orderstatus", (message) => {
+  //       console.log("New offer received!", message);
+  //       toast.success(message.data, {
+  //         position: "top-right",
+  //         autoClose: 3000,
+  //         hideProgressBar: false,
+  //         closeOnClick: true,
+  //         pauseOnHover: true,
+  //         draggable: true,
+  //         progress: undefined,
+  //       });
+
+  //       // Update state with new notification
+  //       const newNotification = { message: message.data, id: Date.now() };
+  //       setNotifications((prevNotifications) => [
+  //         ...prevNotifications,
+  //         newNotification,
+  //       ]);
+  //       console.log(notifications);
+  //       const storedNotifications =
+  //         JSON.parse(localStorage.getItem("notifications")) || [];
+  //       storedNotifications.push(newNotification);
+  //       localStorage.setItem(
+  //         "notifications",
+  //         JSON.stringify(storedNotifications)
+  //       );
+  //       setUnreadCount((prevCount) => prevCount + 1);
+  //     });
+
+  //     return () => {
+  //       channel.unsubscribe();
+  //     };
+  //   }
+  // }, []);
 
   const clearAllNotifications = () => {
     setNotifications([]);
@@ -176,7 +268,6 @@ const Navbar = () => {
 
   return (
     <div className="sticky z-50 top-0">
-      <ToastContainer />
       <nav className="flex bg-white shadow-lg items-center justify-between h-16 lg:px-[70px] md:h-20 px-5 ">
         <div className="flex gap-6 items-center">
           <NavLink to="/">
@@ -308,24 +399,32 @@ const Navbar = () => {
             </div>
             {isNotificationDropdownVisible && (
               <div className="absolute top-12 z-50 right-0 bg-white shadow-md p-2 w-[12rem] rounded-lg overflow-hidden notification-dropdown">
-                {notifications.length === 0 ? (
-                  <div className="p-2 text-center text-gray-500">No notifications</div>
-                ) : (
-                  notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className="p-2 flex gap-2 items-center items-center border-b border-gray-200"
-                    >
-                      <p className="text-sm flex-grow">{notification.message}</p>
-                      <button
-                        onClick={() => removeNotification(notification.id)}
-                        className="text-gray-500"
-                      >
-                        <FontAwesomeIcon icon={faTimes} />
-                      </button>
+                <div className="max-h-52 overflow-y-auto">
+                  {" "}
+                  {/* Add max height and overflow-y-auto */}
+                  {notifications.length === 0 ? (
+                    <div className="p-2 text-center text-gray-500">
+                      No notifications
                     </div>
-                  ))
-                )}
+                  ) : (
+                    notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className="p-2 flex gap-2 items-center border-b border-gray-200"
+                      >
+                        <p className="text-sm flex-grow">
+                          {notification.message}
+                        </p>
+                        <button
+                          onClick={() => removeNotification(notification.id)}
+                          className="text-gray-500"
+                        >
+                          <FontAwesomeIcon icon={faTimes} />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
                 <button
                   onClick={clearAllNotifications}
                   className="w-full py-2 text-center text-gray-500 border-t border-gray-200"

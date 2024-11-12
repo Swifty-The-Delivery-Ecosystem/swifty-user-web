@@ -10,7 +10,6 @@ import { OrderHistoryProvider } from "./context/orderHistoryContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
     <CartProvider>
       <RestaurantProvider>
         <LocationProvider>
@@ -22,5 +21,4 @@ root.render(
         </LocationProvider>
       </RestaurantProvider>
     </CartProvider>
-  </React.StrictMode>
 );

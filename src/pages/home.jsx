@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import axios from 'axios';
 import home from "../assets/images/home.png";
 import star from "../assets/images/star.png";
 import "../assets/css/home.css";
@@ -12,14 +13,14 @@ import { useRestaurant } from "../context/restaurant_details";
 const Home = () => {
   const { restaurants, setRestaurants, recommendations, setRecommendations } =
     useRestaurant();
-  const ref = useRef(null);
-  const { scrollXProgress } = useScroll({ container: ref });
-  const navigate = useNavigate();
-  const { selectedLocation, setSelectedLocation } = useSetlocation();
-  const { userData } = useProfile();
-  const [showVegetarian, setShowVegetarian] = useState(false);
-  const [showNonVegetarian, setShowNonVegetarian] = useState(false);
-  const [offerItems, setofferItems] = useState([]);
+    const ref = useRef(null);
+    const { scrollXProgress } = useScroll({ container: ref });
+    const navigate = useNavigate();
+    const { selectedLocation, setSelectedLocation } = useSetlocation();
+    const { userData } = useProfile();
+    const [showVegetarian, setShowVegetarian] = useState(false);
+    const [showNonVegetarian, setShowNonVegetarian] = useState(false);
+    const [offerItems, setofferItems] = useState([]);
 
   const tags = [
     {
@@ -105,24 +106,24 @@ const Home = () => {
 
   useEffect(() => {
     let token = localStorage.getItem("token");
-    token &&
-      userData &&
-      fetch(
-        `https://order-service-git-main-swiftyeco.vercel.app/api/v1/order_service/user/recommendv2/${userData._id}`,
-        {
-          method: "get",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          setRecommendations(data.recommendedItems);
+    if (token && userData) {
+      axios
+        .post(
+          `https://order-service-git-main-swiftyeco.vercel.app/api/v1/order_service/user/recommend/v2/${userData._id}`,
+          {}, 
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
+          setRecommendations(response.data.recommendedItems);
         })
         .catch((error) => console.error("Error fetching data:", error));
-  }, [userData]);
+    }
+  }, [userData]);  
 
   const handleTagClick = (tag) => {
     fetch(

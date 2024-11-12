@@ -19,7 +19,6 @@ const Home = () => {
     const { selectedLocation, setSelectedLocation } = useSetlocation();
     const { userData } = useProfile();
     const [showVegetarian, setShowVegetarian] = useState(false);
-    const [showNonVegetarian, setShowNonVegetarian] = useState(false);
     const [offerItems, setofferItems] = useState([]);
 
   const tags = [
@@ -94,11 +93,6 @@ const Home = () => {
     )
       .then((response) => response.json())
       .then((data) => {
-        // Repeat the restaurants 10 times
-        const repeatedRestaurants = Array.from(
-          { length: 4 },
-          () => data
-        ).flat();
         setRestaurants(data);
       })
       .catch((error) => console.error("Error fetching data:", error));
@@ -145,14 +139,12 @@ const Home = () => {
   };
 
   const filteredRestaurants = restaurants.filter((restaurant) => {
-    if (showVegetarian && showNonVegetarian) return true;
-    if (showVegetarian) return restaurant.is_veg === true;
-    if (showNonVegetarian) return restaurant.is_veg === false;
-    return true;
+    return showVegetarian ? restaurant.is_veg === true : true;
   });
+  
   const [sortBy, setSortBy] = useState(null);
 
-  const sortedRestaurants = filteredRestaurants.slice().sort((a, b) => {
+  const sortedRestaurants = filteredRestaurants.sort((a, b) => {
     if (sortBy === "lowToHigh") {
       return a.ratings - b.ratings;
     } else if (sortBy === "highToLow") {
